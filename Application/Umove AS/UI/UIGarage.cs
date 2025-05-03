@@ -10,7 +10,7 @@ namespace Umove_AS.UI
 {
     public class UIGarage
     {
-        private Garage garage = new Garage();
+        private GarageHandler garage = new GarageHandler();
 
         public void CreateBus()
         {

@@ -7,7 +7,7 @@ using Umove_AS.Models;
 
 namespace Umove_AS.Services
 {
-    public class Garage
+    public class GarageHandler
     {
         private List<Bus> busses = new List<Bus>();
 

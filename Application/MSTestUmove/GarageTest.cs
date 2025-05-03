@@ -10,7 +10,7 @@ namespace MSTestUmove
         public void AddBus_AddbusSucces()
         {
             // Arrange
-            var garage = new Garage();
+            var garage = new GarageHandler();
             var bus = new Bus("Bus1", 300, 2.5);
 
             // Act
@@ -24,7 +24,7 @@ namespace MSTestUmove
         [TestMethod]
         public void AddBus_DublicateAlarm()
         {
-            var garage = new Garage();
+            var garage = new GarageHandler();
             garage.AddBus(new Bus("Bus1", 300, 2.5));
             garage.AddBus(new Bus("Bus1", 300, 2.5)); //Skal sige fejl
         }
@@ -32,7 +32,7 @@ namespace MSTestUmove
         [TestMethod]
         public void EditBus_UpdateData()
         {
-            var garage = new Garage();
+            var garage = new GarageHandler();
             garage.AddBus(new Bus("Bus1", 300, 2.5));
 
             garage.EditBus("Bus1", 350, 2.5);
@@ -45,7 +45,7 @@ namespace MSTestUmove
         [TestMethod]
         public void RemoveBus_Delete()
         {
-            var garage = new Garage();
+            var garage = new GarageHandler();
             garage.AddBus(new Bus("Bus1", 300, 2.5));
 
             garage.RemoveBus("Bus1");
