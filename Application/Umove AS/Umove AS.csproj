@@ -9,8 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
-    <Folder Include="Handler\" />
     <Folder Include="Type\" />
   </ItemGroup>
 
