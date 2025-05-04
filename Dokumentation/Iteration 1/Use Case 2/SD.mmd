@@ -1,0 +1,57 @@
+sequenceDiagram
+	participant Driftsmedarbejder
+	participant System
+	participant BusManagementSystem
+
+	System-->>Driftsmedarbejder: RequestEmployeeLogin
+	Driftsmedarbejder->>System: InsertEmployeeLogin
+
+	System->>BusManagementSystem: VerifyEmployeeLogin
+	BusManagementSystem-->>System: EmployeeLoginVerified
+
+	System-->>Driftsmedarbejder: ShowOptions
+	Driftsmedarbejder->>System: ChooseOption
+
+	System->>BusManagementSystem: ChooseBusList
+	BusManagementSystem-->>System: BusList
+	System-->>Driftsmedarbejder: ShowBusList
+
+	Driftsmedarbejder->>System: ChooseBatteryStatus
+	System->>BusManagementSystem: CheckBatteryStatus
+	BusManagementSystem-->>System: BatteryStatus
+	System-->>Driftsmedarbejder: ShowBatteryStatus
+
+	Driftsmedarbejder->>System: FilterBatteryStatus
+	System->>BusManagementSystem: FilterBatteryStatus
+	BusManagementSystem-->>System: BatteryStatus
+	System-->>Driftsmedarbejder: Show BatteryStatus
+
+	Driftsmedarbejder->>System: Choose Bus
+	System-->>Driftsmedarbejder: Request BusID
+	Driftsmedarbejder->>System: Enter BusID
+	System->>BusManagementSystem: Check BusID
+	BusManagementSystem-->>System: BusID Verified
+	System-->>Driftsmedarbejder: Display("Bus Not Found")
+	System-->>Driftsmedarbejder: Show Options
+	Driftsmedarbejder->>System: Choose DetailedBusStatus
+	System->>BusManagementSystem: CheckDetailedBusStatus
+	BusManagementSystem-->>System: DetailedBusStatus
+	System-->>Driftsmedarbejder: Display("Bus offline")
+	System-->>Driftsmedarbejder: Show DetailedBusStatus
+	
+	Driftsmedarbejder->>System: Choose BatteryTimeLeft
+	System->>BusManagementSystem: Check BatteryTimeLeft
+	BusManagementSystem-->>System: BatteryTimeLeft
+	System-->>Driftsmedarbejder: Show BatteryTimeLeft
+
+	Driftsmedarbejder->>System: Choose FilterBusStatus
+	System->>BusManagementSystem: Filter BusStatus
+	BusManagementSystem-->>System: ListFilteredBusStatus
+	System-->>Driftsmedarbejder: Show ListFilteredBusStatus
+
+	Driftsmedarbejder->>System: SortByCurrentCharge
+	System->>BusManagementSystem: SortByCurrentCharge
+	BusManagementSystem-->>System: SortedListByCurrentCharge
+	System-->>Driftsmedarbejder: Show SortedListByCurrentCharge
+
+

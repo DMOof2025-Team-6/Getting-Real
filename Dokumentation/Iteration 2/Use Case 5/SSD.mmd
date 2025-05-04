@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant Driftsmedarbejder
+    participant System
+
+    Driftsmedarbejder->>System: Valg Vagtplan til indlæsning
+    System-->>Driftsmedarbejder: Vagtplan er indlæst
+
+    Driftsmedarbejder->>System: Tildel Vagtplan til Bus
+    System-->>Driftsmedarbejder: Vagtplan er tildelt til Bus
+    
+    Driftsmedarbejder->>System: Ændre Vagtplan til Bus
+    System-->>Driftsmedarbejder: Vagtplan Bus er ændret
+
+    Driftsmedarbejder->>System: Tjek Vagtplan for en Bus
+    System-->>Driftsmedarbejder: Viser Bus med Vagtplan
+

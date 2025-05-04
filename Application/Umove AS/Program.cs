@@ -52,7 +52,8 @@ namespace Umove_AS
             {
                 new ("Administrer stam bus‑data",   () => menu.Push(AdminstrateBusData())),
                 new ("Overvåg batteristatus",                       PromptBatteryMonitor),
-                
+                new ("Administrer vagtplaner",   () => menu.Push(AdministrateShiftPlans())), //DK
+
             });
 
         private static MenuPage AdminstrateBusData() => new(
@@ -72,6 +73,15 @@ namespace Umove_AS
                 new ("Rediger Chauføre ",    PromptDummy),
                 new ("Rediger Busser",       PromptDummy),
 
+            });
+
+        private static MenuPage AdministrateShiftPlans() => new(//DK
+            "Driftmedarbejder",
+            new List<MenuItem>
+            {
+                new ("Opret Vagtplan", () => uiGarage.CreateShiftPlan()),
+                new ("Slet Vagtplan",    () => uiGarage.DeleteShiftPlan()), 
+                new ("Vis Busser",  () => uiGarage.ShowShiftPlans()),
             });
 
 

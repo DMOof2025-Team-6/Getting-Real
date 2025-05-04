@@ -1,0 +1,43 @@
+sequenceDiagram
+	participant Driftsmedarbejder
+	participant System
+	participant BusManagementSystem
+
+	Driftsmedarbejder ->> System : Choose add Shift Plan
+	System -->> Driftsmedarbejder : Enter Shift Plan ID
+	Driftsmedarbejder ->> System : Enter Shift Plan ID
+	System ->> BusManagementSystem : Add Shift Plan ID
+	BusManagementSystem -->> System : Shift Plan ID added to ShiftPlanList
+	System -->> Driftsmedarbejder : Return Confirmation
+
+	Driftsmedarbejder -->> System : Select Shift Plan ID
+	System -->> BusManagementSystem : Select Shift Plan ID
+	BusManagementSystem ->> System : Shift Plan ID Selected
+	System ->> Driftsmedarbejder : Return Shift Plan ID
+	Driftsmedarbejder ->> System : Select <<Add Bus>> To Shift Plan ID
+	System -->> Driftsmedarbejder : Return Enter BusID
+	Driftsmedarbejder ->> System : Enter BusID
+	System ->> BusManagementSystem : Update ShiftPlanList with BusID
+	BusManagementSystem -->> System : ShiftPlanList Updated
+	System -->> Driftsmedarbejder : Return Confirmation "Vagtplan Tildelt"
+
+	Driftsmedarbejder ->> System : Select BusID
+	System ->> BusManagementSystem : Select BusID
+	BusManagementSystem -->> System : BusID Selected
+	System -->> Driftsmedarbejder : Return Confirmation BusID Selected
+	Driftsmedarbejder ->> System : Select Add Shift Plan
+	System -->> Driftsmedarbejder : Return Enter Shift PlanID
+	Driftsmedarbejder ->> System : Enter Shift PlanID
+	System ->> BusManagementSystem : Update Bus with Shift PlanID
+	BusManagementSystem -->> System : Shift Plan ID Updated
+	System -->> Driftsmedarbejder : Return Confirmation "Shift Plan Updated"
+
+	Driftsmedarbejder ->> System : Select BusStatus
+	System -->> Driftsmedarbejder : Return Enter BusID
+	Driftsmedarbejder ->> System : Enter BusID
+	System ->> BusManagementSystem : Select BusID
+	BusManagementSystem -->> System : BusID Selected
+	System -->> Driftsmedarbejder : Return ShiftPlanStatus
+
+	
+

@@ -1,0 +1,21 @@
+classDiagram
+	class ShiftPlan{
+		+string Shiftname
+	}
+
+	class Bus {
+		+string BusID	
+		+ShiftPlan ShiftPlan
+	}
+
+	class Garage {		
+		+List<Garage>ShiftPlanList
+		+AddShiftPlan() : void
+		+RemoveShiftPlan() : void
+		+UpdateBusShiftPlan() : void
+		+GetAllShiftPlans() : void
+		+GetBusShiftPlan() : void
+	}
+
+	Garage "1" --> "*" Bus
+	Bus "1" --> "*" ShiftPlan

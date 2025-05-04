@@ -1,0 +1,13 @@
+classDiagram
+    class Bus {
+        ID
+        batteryCapacity
+        currentCharge
+        kmPerKwh
+        location
+        busstatus
+    }
+    class Garage {
+        Busser
+    }
+    Garage "1" --> "*" Bus

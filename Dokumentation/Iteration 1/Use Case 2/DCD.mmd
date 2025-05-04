@@ -1,0 +1,40 @@
+classDiagram
+    class Bus {
+        +string ID
+        +double BatteryCapacity
+        +double CurrentCharge
+        +double kmPerKWh
+        +double KmPerLiter
+        +double CurrentChargeKWh
+        +int CurrentChargePercent
+        +double ChargerSpeed
+        +TimeSpan OperationalTime
+        +string Location
+        +double AverageSpeed
+    }
+
+    class Garage {
+        -double LowBatteryTreshold
+        +List<Bus> Busses
+        +enum BusStatus
+        +GetAllBuses() List<Bus>
+        +GetBatteryStatus() void
+        +FilterBatteryStatus() void
+        +GetBusStatus() void
+        +GetBatteryTimeLeft() void
+        +GetChargingTimeLeft() void
+        +SortByCurrentCharge() void
+        +PercentageBatteryUsePerHour() void
+    }
+
+    class BusStatus{
+        <<enumeration>>
+        InRoute
+        Free
+        Garage
+        Charging
+        Repair
+    }
+    
+    Garage "1" --> "*" Bus
+    Bus -- BusStatus : has a
