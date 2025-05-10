@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant Driftsmedarbejder
+    participant System
+
+    Driftsmedarbejder->>System: Efterspørg at gemme fil
+    System-->>Driftsmedarbejder: Bekræft fil er gemt
+
+    Driftsmedarbejder->>System: Valg at indlæse fra fil
+    System-->>Driftsmedarbejder: Bekræft fil er indlæst
+    
+    Driftsmedarbejder->>System: Valg at lave en manuel backup
+    System-->>Driftsmedarbejder: Bekræft manuel backup

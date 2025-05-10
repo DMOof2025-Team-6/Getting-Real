@@ -1,0 +1,26 @@
+sequenceDiagram
+	participant User
+	participant System
+	participant File System
+
+User ->> System : Request save data
+System ->> File System : Save data to file
+File System -->> System : Confirmation of data saved
+System -->> User : Notification of successful save
+
+
+User ->> System : Request to load data
+System ->> File System : Load data from File
+alt File Found
+	File System -->> System : Data Loaded
+	System -->> User : Motification of successful Load
+else File Not Found
+	File System -->> System : File not found
+	System -->> User : Error: File not found
+end
+
+
+User ->> System : Request manual backup
+System ->> File System : Create backup File
+File System -->> System : Confirmation of backup created
+System -->> User : Notification of successful backup

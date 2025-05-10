@@ -61,7 +61,7 @@ namespace Umove_AS
             {
                 new ("Administrer stam bus‑data",   () => menu.Push(AdminstrateBusData())),
                 new ("Overvåg batteristatus",       () => menu.Push(ShowBatteriStatus())),
-                new ("Administrer vagtplaner",      () => menu.Push(AdministrateShiftPlans())), //DK
+                new ("Administrer vagtplaner",      () => menu.Push(AdministrateShiftPlans())),
 
             });
 
@@ -76,14 +76,14 @@ namespace Umove_AS
                 new ("Vis busser",          () => garageUI.ShowBusses()),
             });
 
-        private static MenuPage ShowBatteriStatus() => new(//DK
+        private static MenuPage ShowBatteriStatus() => new(
            "Driftmedarbejder",
            new List<MenuItem>
            {
                 new ("Vis busser", () => garageUI.ShowBusses()),
            });
 
-        private static MenuPage AdministrateShiftPlans() => new(//DK
+        private static MenuPage AdministrateShiftPlans() => new(
            "Driftmedarbejder",
            new List<MenuItem>
            {

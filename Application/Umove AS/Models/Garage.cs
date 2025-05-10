@@ -9,9 +9,9 @@ namespace Umove_AS.Models
     public class Garage
     {
         private double LowBatteryTreshold = 20; //DK grænse for lav batteri
-        public string ShiftPlanID; //DK
+        public string ShiftPlanID; 
 
-        private List<ShiftPlan> shiftplans = new List<ShiftPlan>();
+        public List<ShiftPlan> shiftplans = new List<ShiftPlan>();
 
         private List<Bus> busses = new List<Bus>();
 
@@ -54,7 +54,7 @@ namespace Umove_AS.Models
             return busses;
         }
 
-        public List<Bus> FilterLowBatteryStatus()//DK
+        public List<Bus> FilterLowBatteryStatus()
         {
             List<Bus> lowBatteryBusses = new List<Bus>();
             foreach (Bus bus in busses)
@@ -67,7 +67,7 @@ namespace Umove_AS.Models
             return lowBatteryBusses;
         }
 
-        public int GetBatteryStatus(int busID)//DK -- NOTE: ???New class BusStatus including batterystatus, busname, etc
+        public int GetBatteryStatus(int busID)// -- NOTE: ???New class BusStatus including batterystatus, busname, etc
         {
             Bus bus = busses.FirstOrDefault(b => Convert.ToInt32(b.ID) == busID);
             if (bus != null)
@@ -134,6 +134,9 @@ namespace Umove_AS.Models
         {
             return new List<ShiftPlan>(shiftplans);
         }
+
+
+
 
         /*public void UpdateBusShiftPlan() //DK Tilknytter Vagtplan til BusID
         {
