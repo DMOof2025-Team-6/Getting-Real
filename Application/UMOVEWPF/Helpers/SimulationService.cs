@@ -11,6 +11,7 @@ namespace UMOVEWPF.Helpers
         private readonly ObservableCollection<Bus> _buses;
         private readonly double _averageSpeedKmh;
         private readonly Weather _weather;
+        private DateTime _lastTick;
 
         public bool IsRunning => _timer.IsEnabled;
 
@@ -23,12 +24,16 @@ namespace UMOVEWPF.Helpers
             _timer.Tick += (s, e) => SimulateTick();
         }
 
-        public void Start() => _timer.Start();
+        public void Start() { _lastTick = DateTime.Now; _timer.Start(); }
         public void Stop() => _timer.Stop();
 
         private void SimulateTick()
         {
-            double hours = 1.0 / 3600.0; // 1 sekund
+            var now = DateTime.Now;
+            double seconds = (now - _lastTick).TotalSeconds;
+            if (seconds <= 0) seconds = 1.0; // fallback
+            _lastTick = now;
+            double hours = seconds / 3600.0;
             double consumptionMultiplier = _weather?.ConsumptionMultiplier ?? 1.0;
             foreach (var bus in _buses)
             {
@@ -39,7 +44,7 @@ namespace UMOVEWPF.Helpers
                     double percentUsed = (consumptionKWh / bus.BatteryCapacity) * 100.0;
                     bus.BatteryLevel -= percentUsed;
                     if (bus.BatteryLevel < 0) bus.BatteryLevel = 0;
-                    bus.LastUpdate = bus.LastUpdate.AddSeconds(1);
+                    bus.LastUpdate = bus.LastUpdate.AddSeconds(seconds);
                 }
             }
         }
