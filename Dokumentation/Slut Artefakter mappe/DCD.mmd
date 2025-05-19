@@ -1,0 +1,300 @@
+classDiagram
+%% ========== MODELS ==========
+class Bus {
+    -_busId: string
+    -_model: BusModel
+    -_year: string
+    -_batteryCapacity: double
+    -_batteryLevel: double
+    -_consumption: double
+    -_lastUpdate: DateTime
+    -_statusChangedAt: DateTime
+    -_status: BusStatus
+    -_route: RouteName
+ 
+    +BusId: string
+    +Model: BusModel
+    +Year: string
+    +BatteryCapacity: double
+    +BatteryLevel: double
+    +Consumption: double
+    +LastUpdate: DateTime
+    +StatusChangedAt: DateTime
+    +Status: BusStatus
+    +Route: RouteName
+    +IsCritical: bool
+    +IsInService: bool
+    +DisplayText: string
+    +BatteryInfo: BatteryInfo
+    +TimeLeftUntil13Percent(averageSpeedKmh: double): TimeSpan
+}
+ 
+class BatteryInfo {
+    -_capacity: double
+    -_consumption: double
+    -_level: double
+ 
+    +Capacity: double
+    +Consumption: double
+    +Level: double
+    +IsCritical : bool
+    +OnPropertyChanged(propertyName: string): void
+}
+ 
+class Route {
+    -_name: RouteName
+    -_distance: double
+    -_description : string
+    -_estimatedTime : int
+ 
+    +Name: RouteName
+    +Distance: double
+    +EstimatedTime : int
+    +Description : string
+    +OnPropertyChanged(propertyName: string): void
+}
+ 
+class Weather {
+    -_month: Month
+    -_isRaining: bool
+ 
+    +Month: Month
+    +IsRaining: bool
+    +ConsumptionMultiplier: double
+    +GetConsumptionMultiplier(): double
+    +SaveToFile(path: string): void
+    +LoadFromFile(path: string): void
+}
+ 
+%% ========== SERVICES & HELPERS ==========
+class SimulationService {
+    -_timer: DispatcherTimer
+    -_buses: ObservableCollection~Bus~
+    -_averageSpeedKmh: double
+    -_weather: Weather
+    +IsRunning: bool
+ 
+    +Start(): void
+    +Stop(): void
+    +SimulateTick(): void
+}
+ 
+class FileHelper {
+    -BusesFile: string
+    -RoutesFile: string
+    +SaveBusesAsync(buses: IEnumerable~Bus~): Task
+    +LoadBusesAsync(): Task<List~Bus~>
+    +SaveRoutesAsync(routes: IEnumerable~Route~): Task
+    +LoadRoutesAsync(): Task<List~Route~>
+}
+ 
+class RelayCommand {
+    -_execute: Action~object~
+    -_canExecute: Func~object,bool~
+ 
+    +CanExecute(parameter: object): bool
+    +Execute(parameter: object): void
+}
+ 
+%% ========== VIEW-MODEL BASIS ==========
+class BaseViewModel {
+    +PropertyChanged: event
+    +OnPropertyChanged(propertyName: string): void
+    +SetProperty(field: T, value: T): bool
+}
+ 
+%% ========== VIEW-MODELS ==========
+class MainViewModel {
+    -_simService: SimulationService
+    -_allBuses: ObservableCollection~Bus~
+    -_filteredBuses: ObservableCollection~Bus~
+    -_selectedBus: Bus
+    -_batteryLevelInput: string
+    -_currentView: string
+    -_showOnlyCritical: bool
+    -_showOnlyCriticalToggle: bool
+    -_searchText: string
+    -_isReplacementDialogOpen: bool
+ 
+    +SelectedBus: Bus
+    +BatteryLevelInput: string
+    +CurrentView: string
+    +ShowOnlyCritical: bool
+    +ShowOnlyCriticalToggle: bool
+    +CriticalButtonText: string
+    +FilteredBuses: ObservableCollection~Bus~
+    +SearchText: string
+    +CurrentConsumption: double
+    +MonthAndFactor: string
+    +WiperStatus: string
+    +Weather: Weather
+ 
+    +InitializeAsync(): Task
+    -LoadBusesAsync: Task
+    -AddBus(): void
+    -EditBus(): void
+    -RemoveBus(): void
+    -FilterBuses(): void
+    -Bus_PropertyChanged(sender: object, e: PropertyChangedEventArgs): void
+    -ShowBatteryStatus(): void
+    -ShowBusAdmin(): void
+    -ShowBusReplacementDialog(): void
+    -ShowBusRouter(): void
+    -ShowChargingPlan(): void
+    -ShoCriticalBuses(): void
+    -ShowWeatherWindow(): void
+    -ToggleCriticalBuses(): void
+    -UpdateBatteryLevel(): void
+    -UpdateBatteryStatus(): void
+}
+ 
+class BusListViewModel {
+    -_batterLevelInput: string
+    -_simService: SimulationService
+    -_buses: ObservableCollection~Bus~
+    -_selectedBus: Bus
+ 
+    +Buses: ObservableCollection~Bus~
+    +ReplaceBusCmd: RelayCommand
+
+    -AddBus(): void
+    -EditBus(): void
+    -DeleteBus(): void
+    -UpdateBatteryStatus(): void
+    -UpdateBatteryLevel(): void
+}
+ 
+class BusDetailViewModel {
+    +SelectedBus: Bus
+    +Refresh(): void
+    +OnPropertyChanged(propertyName: string): void
+}
+ 
+class AddEditBusViewModel {
+    +Bus: Bus
+    +Models: ObservableCollection~BusModel~
+    +Routes: ObservableCollection~RouteName~
+}
+ 
+class BusReplacementViewModel {
+    -_bus: Bus
+    +Bus: Bus
+    -_availableRoutes: ObersableCollectoin~Route~
+    +AvailableRoutes: ObersableCollectoin~Route~
+
+    -LoadRoutesAsync(): Task
+    -SaveBusAsync(): Task
+    -Cancel(): void
+}
+ 
+class SettingsViewModel {
+    -_routes: ObservableCollection~Route~
+    +Routes: ObservableCollection~Route~
+    -_selectedRoute: Route
+    +SelectedRoute: Route
+
+    -LoadRoutesAsync(): Task
+    -AddRoute(): void
+    -EditRoute(): void
+    -DeleteRoute(): void
+    -SaveRoutesAsync(): Task
+}
+ 
+class WeatherViewModel {
+    +Weather: Weather
+    +Months: ObservableCollection~Weather~
+    +SelectedMonth: Weather
+    +IsRaining: bool
+    -OnPropertyChanges(popertyName: string): void
+}
+ 
+%% ========== CONVERTERS (helpers used by XAML) ==========
+class BoolToColorConverter {
+    +Convert(value: object, targetType: Type, parameter: object, culture: CultureInfo): object
+    +ConvertBack(): object
+}
+class BooleanToVisibilityConverter {
+    +Convert(value: object, targetType: Type, parameter: object, culture: CultureInfo): object
+    +ConvertBack(): object
+}
+class EnumToListConverter {
+    +Convert(value: object, targetType: Type, parameter: object, culture: CultureInfo): object
+    +ConvertBack(): object
+}
+class NullToVisibilityConverter {
+    +Convert(value: object, targetType: Type, parameter: object, culture: CultureInfo): object
+    +ConvertBack(): object
+}
+class ProgressBarColorConverter {
+    +Convert(value: object, targetType: Type, parameter: object, culture: CultureInfo): object
+    +ConvertBack(): object
+}
+ 
+%% ========== ENUMS ==========
+class BusStatus {
+<<enumeration>>
+    Inroute
+    Intercept
+    Returning
+    Free
+    Garage
+    Charging
+    Repair
+}
+class BusModel {
+<<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+class RouteName {
+<<enumeration>>
+    None
+    R1A
+    R10
+    R11
+    R13
+    R132
+    R133
+    R137
+    R139
+}
+class Month {
+<<enumeration>>
+    Januar
+    Februar
+    Marts
+    April
+    Maj
+    Juni
+    Juli
+    August
+    September
+    Oktober
+    November
+    December
+}
+ 
+%% ========== RELATIONSHIPS ==========
+SimulationService "1" --> "*" Bus : manages
+Bus "1" --> "1" BatteryInfo : battery
+Bus --> BusStatus
+Bus --> BusModel
+Bus --> Route
+Route --> RouteName
+Weather --> Month
+ 
+FileHelper ..> Bus   : serialises
+FileHelper ..> Route : serialises
+ 
+MainViewModel --> BusListViewModel
+MainViewModel --> SettingsViewModel
+MainViewModel --> WeatherViewModel
+ 
+BusListViewModel --> Bus
+BusDetailViewModel --> Bus
+BusReplacementViewModel --> Bus
+AddEditBusViewModel --> Bus
+SettingsViewModel --> Route
+WeatherViewModel --> Weather

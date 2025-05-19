@@ -1,0 +1,68 @@
+classDiagram
+    class BatteriAnalyseController {
+        -IBatteriService _batteriService
+        -IExportService _exportService
+        +HentBatterihistorik() List~BatteriMålingViewModel~
+        +GenererAnalyseRapport() BatteriAnalyseRapportViewModel
+        +EksporterData(ExportFormat format)
+    }
+
+    class BatteriMålingViewModel {
+        +int BusID
+        +string BusNummer
+        +DateTime Tidspunkt
+        +double Kapacitet
+        +double LadeCyklus
+        +double SundhedsTilstand
+    }
+
+    class BatteriAnalyseRapportViewModel {
+        +DateTime GenereretstidsPunkt
+        +int AntalBusser
+        +double GennemsnitligKapacitetsTab
+        +List~BatteriMålingViewModel~ Målinger
+        +List~Vedligeholdelsesanbefaling~ Anbefalinger
+    }
+
+    class IBatteriService {
+        <<interface>>
+        +List~BatteriMåling~ HentBatteriMålinger(AnalyseKriterier kriterier)
+        +double BeregnGennemsnitligKapacitetsTab(List~BatteriMåling~ målinger)
+        +List~Vedligeholdelsesanbefaling~ GenererVedligeholdelsesanbefalinger(List~BatteriMåling~ målinger)
+    }
+
+    class BatteriService {
+        -IBatteriRepository _batteriRepository
+        +HentBatteriMålinger(AnalyseKriterier kriterier) List~BatteriMåling~
+        +BeregnGennemsnitligKapacitetsTab(List~BatteriMåling~ målinger) double
+        +GenererVedligeholdelsesanbefalinger(List~BatteriMåling~ målinger) List~Vedligeholdelsesanbefaling~
+    }
+
+    class IExportService {
+        <<interface>>
+        +void EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
+        +string GenererFilnavn()
+    }
+
+    class CsvExportService {
+        +EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
+        +string GenererFilnavn()
+    }
+
+    class ExcelExportService {
+        +EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
+        +string GenererFilnavn()
+    }
+
+    class AnalyseKriterier {
+        +DateTime StartDato
+        +DateTime SlutDato
+        +double MinimumKapacitetsTærskel
+        +Valider() bool
+    }
+
+    BatteriAnalyseController ..> IBatteriService
+    BatteriAnalyseController ..> IExportService
+    BatteriService ..|> IBatteriService
+    CsvExportService ..|> IExportService
+    ExcelExportService ..|> IExportService

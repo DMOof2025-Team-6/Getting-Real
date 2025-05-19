@@ -1,34 +1,83 @@
 classDiagram
-
+    %% ======== DOMAIN ENTITIES ========
     class Bus {
         +string BusId
-        +string RouteId
-        +bool Koerer        
-        +double KwhPerTime
+        +BusModel Model
+        +RouteName Route
         +double BatteryCapacity
-        +double CurrentCharge
-        +double KmPerKwh
-        +string Location
-        +string BusStatus
+        +double BatteryLevel
+        +BusStatus Status
+        +DateTime LastUpdate
+        +DateTime StatusChangedAt
     }
-
-    class BusService {
-        +List<Bus> Busser
+ 
+    class BatteryInfo {
+        +double CapacitykWh
+        +double LevelPercent
+        +double ConsumptionkWhPerKm
     }
-
-    class ShiftPlan {
-        +string ShiftplanId
-        +DateTime StartTid
-        +DateTime SlutTid
-        +string Chauffoer
+ 
+    class Route {
+        +RouteName Name
+        +double DistanceKm
     }
-
-    class Garage {
-        +List<Bus> Busser
-        +List<ShiftPlan> ShiftPlans
+ 
+    class Weather {
+        +Month Month
+        +double TemperatureC
+        +double SnowDepthCm
+        +double RainMm
     }
-
-    BusService "1" --> "*" Bus : administrerer
-    Garage "1" --> "*" Bus : indeholder
-    Garage "1" --> "*" ShiftPlan : har
-    Bus "1" --> "*" ShiftPlan : tildelt
+ 
+    %% ======== ENUMERATIONS ========
+    class BusStatus {
+<<enumeration>>
+        InRoute
+        Intercept
+        Returning
+        Charging
+    }
+ 
+    class BusModel {
+<<enumeration>>
+        MBeCitaro
+        YutongE12
+        BYDK9
+        Volvo7900E
+    }
+ 
+    class RouteName {
+<<enumeration>>
+        R1A
+        R10
+        R11
+        R13
+        R132
+        R133
+        R137
+        R139
+    }
+ 
+    class Month {
+<<enumeration>>
+        Januar
+        Februar
+        Marts
+        April
+        Maj
+        Juni
+        Juli
+        August
+        September
+        Oktober
+        November
+        December
+    }
+ 
+    %% ======== RELATIONSHIPS ========
+    Bus "1" --> "1" BatteryInfo : battery
+    Bus --> BusStatus
+    Bus --> BusModel
+    Bus --> Route
+    Route --> RouteName
+    Weather --> Month
