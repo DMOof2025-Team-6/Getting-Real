@@ -1,0 +1,41 @@
+%% DCD (Design Class Diagram) for Use Case 1 + 2 + 3
+classDiagram
+    class BusListViewModel {
+        + ObservableCollection<Bus> Buses
+        + SaveBusCommand()
+        + DeleteBusCommand()
+        + LoadBatteryStatusCommand()
+        + UpdateBatteryLevelCommand()
+    }
+ 
+    class FileHelper {
+        +List<Bus> LoadBuses()
+        +void SaveBuses(List<Bus>)
+        +void DeleteBus(string id)
+    }
+ 
+    class AlertService {
+        +List<Bus> GetLowBatteryBuses(double threshold)
+        +void SortByBatteryLevel(List<Bus>)
+    }
+ 
+    class SimulationService {
+        +void UpdateBatteryStatus()
+        +double EstimateRemainingTime(Bus bus)
+    }
+ 
+    class Bus {
+        +string Id
+        +double BatteryLevel
+        +BusStatus Status
+        +BusModel Model
+    }
+ 
+    BusListViewModel --> FileHelper
+    BusListViewModel --> AlertService
+    BusListViewModel --> SimulationService
+    FileHelper --> Bus
+    AlertService --> Bus
+    SimulationService --> Bus
+    Bus --> BusStatus
+    Bus --> BusModel

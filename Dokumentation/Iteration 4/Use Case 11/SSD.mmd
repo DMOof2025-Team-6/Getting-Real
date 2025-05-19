@@ -1,12 +1,11 @@
+%% SSD (System Sequence Diagram) for Use Case 11: Datahåndtering og persistens
 sequenceDiagram
-    participant Driftsmedarbejder
+    actor Driftsmedarbejder
     participant System
-
-    Driftsmedarbejder->>System: Efterspørg at gemme fil
-    System-->>Driftsmedarbejder: Bekræft fil er gemt
-
-    Driftsmedarbejder->>System: Valg at indlæse fra fil
-    System-->>Driftsmedarbejder: Bekræft fil er indlæst
-    
-    Driftsmedarbejder->>System: Valg at lave en manuel backup
-    System-->>Driftsmedarbejder: Bekræft manuel backup
+ 
+    Driftsmedarbejder->>System: Luk program (automatisk gem)
+    System-->>Driftsmedarbejder: Data gemt
+    Driftsmedarbejder->>System: Start program (automatisk indlæs)
+    System-->>Driftsmedarbejder: Data indlæst
+    Driftsmedarbejder->>System: Vælg "Tag backup"
+    System-->>Driftsmedarbejder: Backup oprettet

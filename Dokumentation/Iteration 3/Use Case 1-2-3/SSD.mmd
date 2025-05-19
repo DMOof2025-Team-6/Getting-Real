@@ -1,0 +1,13 @@
+%% SSD (System %% SSD (System Sequence Diagram) for Use Case 1 + 2 + 3
+sequenceDiagram
+    actor Driftsmedarbejder
+    participant System
+ 
+    Driftsmedarbejder->>System: Tilføj/rediger/slet bus (stamdata)
+    System-->>Driftsmedarbejder: Stamdata opdateret
+    Driftsmedarbejder->>System: Vis batteristatus for busser
+    System-->>Driftsmedarbejder: Viser liste med batteriniveauer
+    Driftsmedarbejder->>System: Filtrér/sortér/søg bus
+    System-->>Driftsmedarbejder: Returnerer søgeresultat
+    Driftsmedarbejder->>System: Opdater batteristatus manuelt
+    System-->>Driftsmedarbejder: Bekræftelse: Batteristatus opdateret
