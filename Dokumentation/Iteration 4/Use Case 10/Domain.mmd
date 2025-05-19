@@ -1,0 +1,54 @@
+classDiagram
+    class Bus {
+        +int BusID
+        +int BatteriNiveau
+        +BusStatus Status
+        +DateTime SidsteOpladning
+        +bool ErKritisk()
+        +int EstimeretOpladningstid()
+    }
+   
+    class BusStatus {
+       
+        I_DRIFT
+        UNDER_OPLADNING
+        KLAR_TIL_DRIFT
+        UDE_AF_DRIFT
+    }
+   
+    class Notifikation {
+        +int NotifikationID
+        +int BusID
+        +NotifikationsType Type
+        +String Besked
+        +DateTime Tidspunkt
+        +bool ErLæst
+    }
+   
+    class NotifikationsType {
+       
+        LAV_BATTERI
+        OPLADNING_PÅKRÆVET
+        OPLADNING_FÆRDIG
+    }
+   
+    class Opladningsforslag {
+        +int ForslagID
+        +int BusID
+        +DateTime AnbefaletStartTid
+        +int EstimeretVarighed
+        +bool ErAccepteret
+    }
+   
+    class Garage {
+        +int MedarbejderID
+        +String Navn
+        +seFritiske()
+        +markereBusUnderOpladning()
+        +markereBusKlarTilDrift()
+    }
+   
+    Bus "1" -- "0..*" Notifikation
+    Bus "1" -- "0..*" Opladningsforslag
+    Driftsmedarbejder "1" -- "0..*" Opladningsforslag : håndterer
+    Driftsmedarbejder "1" -- "0..*" Bus : administrerer
