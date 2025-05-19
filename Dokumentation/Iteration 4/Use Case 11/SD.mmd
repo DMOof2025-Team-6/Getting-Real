@@ -1,0 +1,11 @@
+%% Sequence Diagram - Automatisk og manuel persistens
+sequenceDiagram
+    participant App
+    participant File as FileHelper
+ 
+    App->>File: LoadBuses() ved opstart
+    File-->>App: Returner liste
+    App->>File: SaveBuses() ved afslutning
+    File-->>App: Bekræft gemt
+    App->>File: CreateBackup() ved brugerhandling
+    File-->>App: Bekræft backup

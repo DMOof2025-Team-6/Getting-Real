@@ -1,0 +1,26 @@
+%% SSD (System %% Sequence Diagram - Internt flow for Use Case 1 + 2 + 3
+sequenceDiagram
+    participant UI
+    participant VM as BusListViewModel
+    participant FH as FileHelper
+    participant Alert as AlertService
+    participant Sim as SimulationService
+ 
+    UI->>VM: Tilføj/rediger/slet bus
+    VM->>FH: SaveBuses() / DeleteBus()
+    FH-->>VM: Bekræft gemt
+ 
+    UI->>VM: Vis batteristatus
+    VM->>Sim: UpdateBatteryStatus()
+    VM->>Alert: GetLowBatteryBuses()
+    Alert-->>VM: Returner filtreret liste
+    loop For hver bus
+        VM-->>UI: Vis busstatus
+    end
+ 
+    UI->>VM: Opdater batteriniveau manuelt
+    VM->>FH: LoadBuses()
+    VM->>VM: Opdater BatteryLevel
+    VM->>FH: SaveBuses()
+    FH-->>VM: Gemt
+    VM-->>UI: Bekræftelse

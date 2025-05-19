@@ -1,0 +1,31 @@
+%% Domain Model for Use Case 1 + 2 + 3: Stamdata, Batteriovervågning og Manuel Opdatering
+classDiagram
+    class Bus {
+        +string Id
+        +double BatteryLevel
+        +BusStatus Status
+        +BusModel Model
+    }
+ 
+    class FileHelper {
+        +List<Bus> LoadBuses()
+        +void SaveBuses(List<Bus>)
+        +void DeleteBus(string id)
+        +void UpdateBus(Bus bus)
+    }
+ 
+    class AlertService {
+        +List<Bus> GetLowBatteryBuses(double threshold)
+        +void SortByBatteryLevel(List<Bus>)
+    }
+ 
+    class SimulationService {
+        +void UpdateBatteryStatus()
+        +double EstimateRemainingTime(Bus bus)
+    }
+ 
+    FileHelper --> Bus
+    AlertService --> Bus
+    SimulationService --> Bus
+    Bus --> BusStatus
+    Bus --> BusModel

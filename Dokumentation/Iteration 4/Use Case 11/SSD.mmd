@@ -1,0 +1,11 @@
+%% SSD (System Sequence Diagram) for Use Case 11: Datahåndtering og persistens
+sequenceDiagram
+    actor Driftsmedarbejder
+    participant System
+ 
+    Driftsmedarbejder->>System: Luk program (automatisk gem)
+    System-->>Driftsmedarbejder: Data gemt
+    Driftsmedarbejder->>System: Start program (automatisk indlæs)
+    System-->>Driftsmedarbejder: Data indlæst
+    Driftsmedarbejder->>System: Vælg "Tag backup"
+    System-->>Driftsmedarbejder: Backup oprettet
