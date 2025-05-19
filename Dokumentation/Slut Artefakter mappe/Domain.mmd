@@ -1,34 +1,83 @@
 classDiagram
+%% ========== DOMÆNE-ENTITETER ==========
+class Bus {
+    +string BusId
+    +BusModel Model
+    +RuteNavn Rute
+    +double BatteriKapacitet
+    +double BatteriNiveau
+    +BusStatus Status
+    +DateTime SidstOpdateret
+    +DateTime StatusÆndretTid
+}
 
-    class Bus {
-        +string BusId
-        +string RouteId
-        +bool Koerer        
-        +double KwhPerTime
-        +double BatteryCapacity
-        +double CurrentCharge
-        +double KmPerKwh
-        +string Location
-        +string BusStatus
-    }
+class BatteriInfo {
+    +double KapacitetKWh
+    +double NiveauProcent
+    +double ForbrugKWhPrKm
+}
 
-    class BusService {
-        +List<Bus> Busser
-    }
+class Rute {
+    +RuteNavn Navn
+    +double DistanceKm
+}
 
-    class ShiftPlan {
-        +string ShiftplanId
-        +DateTime StartTid
-        +DateTime SlutTid
-        +string Chauffoer
-    }
+class Vejr {
+    +Måned Måned
+    +double TemperaturC
+    +double SneDybdeCm
+    +double NedbørMm
+}
 
-    class Garage {
-        +List<Bus> Busser
-        +List<ShiftPlan> ShiftPlans
-    }
+%% ========== ENUMERATIONER ==========
+class BusStatus {
+    <<enumeration>>
+    PåRute
+    Afløser
+    Returnerer
+    Oplader
+}
 
-    BusService "1" --> "*" Bus : administrerer
-    Garage "1" --> "*" Bus : indeholder
-    Garage "1" --> "*" ShiftPlan : har
-    Bus "1" --> "*" ShiftPlan : tildelt
+class BusModel {
+    <<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+
+class RuteNavn {
+    <<enumeration>>
+    R1A
+    R10
+    R11
+    R13
+    R132
+    R133
+    R137
+    R139
+}
+
+class Måned {
+    <<enumeration>>
+    Januar
+    Februar
+    Marts
+    April
+    Maj
+    Juni
+    Juli
+    August
+    September
+    Oktober
+    November
+    December
+}
+
+%% ========== RELATIONER ==========
+Bus "1" --> "1" BatteriInfo : batteri
+Bus --> BusStatus
+Bus --> BusModel
+Bus --> Rute
+Rute --> RuteNavn
+Vejr --> Måned
