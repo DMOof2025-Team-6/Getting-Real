@@ -1,0 +1,23 @@
+sequenceDiagram
+    actor DM as Driftsmedarbejder
+    participant S as System
+   
+    %% View critical buses
+    DM->>S: visKritiskeBusser()
+    S-->>DM: viser liste over kritiske busser
+   
+    %% Get charging recommendations
+    DM->>S: vælgBus(busID)
+    S-->>DM: viser detaljer og opladningsforslag
+   
+    %% Mark as charging
+    DM->>S: markerTilOpladning(busID)
+    S-->>DM: bekræfter bus sat til opladning
+   
+    %% System notification (automatic)
+    Note over S,DM: System detekterer bus med < 20% batteri
+    S->>DM: sender notifikation om lavt batteri
+   
+    %% Mark as ready
+    DM->>S: markerKlarTilDrift(busID)
+    S-->>DM: bekræfter bus klar til drift

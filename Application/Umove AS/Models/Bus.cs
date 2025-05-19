@@ -78,7 +78,7 @@ namespace Umove_AS.Models
 
             TimeSpan timeUntilEmpty = TimeSpan.FromHours(remainingOperationalTime);
 
-            Console.WriteLine($"Bussen bruger på nuværende tidspunkt {Math.Round(currentConsumptionPercent, 2)} % batteri per time. Tid til tom batteri: {timeUntilEmpty.Hours} timer og {timeUntilEmpty.Minutes} minutter.");
+            Console.WriteLine($"Bussen bruger på nuværende tidspunkt {Math.Round(currentConsumptionPercent, 2)} % batteri per time. Tid til tomt batteri: {timeUntilEmpty.Hours} timer og {timeUntilEmpty.Minutes} minutter.");
 
             return TimeSpan.FromHours(remainingOperationalTime);
 

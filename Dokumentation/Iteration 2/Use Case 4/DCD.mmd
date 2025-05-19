@@ -1,0 +1,110 @@
+classDiagram
+    class KritiskeBusserController {
+        -IBusService _busService
+        -INotifikationsService _notifikationsService
+        +KritiskeBusserController(IBusService, INotifikationsService)
+        +List~BusViewModel~ HentKritiskeBusser()
+        +OpladningsforslagViewModel HentOpladningsforslag(int busID)
+        +bool MarkerTilOpladning(int busID)
+        +bool MarkerKlarTilDrift(int busID)
+    }
+
+    class BusViewModel {
+        +int BusID
+        +string BusNummer
+        +int BatteriNiveau
+        +string Status
+        +DateTime SidsteOpladning
+        +int EstimeretOpladningstid
+    }
+
+    class OpladningsforslagViewModel {
+        +int ForslagID
+        +int BusID
+        +string BusNummer
+        +DateTime AnbefaletStartTid
+        +int EstimeretVarighed
+        +bool ErAccepteret
+    }
+
+    class NotifikationsViewModel {
+        +int NotifikationID
+        +int BusID
+        +string Type
+        +string Besked
+        +DateTime Tidspunkt
+        +bool ErLæst
+    }
+
+    class Bus {
+        +int BusID
+        +string BusNummer
+        +int BatteriNiveau
+        +BusStatus Status
+        +DateTime SidsteOpladning
+        +bool ErKritisk()
+        +int EstimerOpladningstid()
+    }
+
+    class Notifikation {
+        +int NotifikationID
+        +int BusID
+        +NotifikationsType Type
+        +string Besked
+        +DateTime Tidspunkt
+        +bool ErLæst
+    }
+
+    class Opladningsforslag {
+        +int ForslagID
+        +int BusID
+        +DateTime AnbefaletStartTid
+        +int EstimeretVarighed
+        +bool ErAccepteret
+    }
+
+    class IBusService {
+        <<interface>>
+        +List~Bus~ HentAlleBusser()
+        +List~Bus~ HentKritiskeBusser()
+        +bool OpdaterBusStatus(int busID, BusStatus status)
+        +Opladningsforslag OpretOpladningsforslag(int busID)
+        +int EstimerOpladningstid(int busID)
+    }
+
+    class BusService {
+        -IBusRepository _busRepository
+        -IOpladningsforslagRepository _opladningsforslagRepository
+        +BusService(IBusRepository, IOpladningsforslagRepository)
+        +List~Bus~ HentAlleBusser()
+        +List~Bus~ HentKritiskeBusser()
+        +bool OpdaterBusStatus(int busID, BusStatus status)
+        +Opladningsforslag OpretOpladningsforslag(int busID)
+        +int EstimerOpladningstid(int busID)
+    }
+
+    class INotifikationsService {
+        <<interface>>
+        +List~Notifikation~ HentNotifikationer()
+        +Notifikation OpretNotifikation(int busID, NotifikationsType type, string besked)
+        +bool MarkerSomLæst(int notifikationID)
+    }
+
+    class NotifikationsService {
+        -INotifikationsRepository _notifikationsRepository
+        +NotifikationsService(INotifikationsRepository)
+        +List~Notifikation~ HentNotifikationer()
+        +Notifikation OpretNotifikation(int busID, NotifikationsType type, string besked)
+        +bool MarkerSomLæst(int notifikationID)
+    }
+
+    KritiskeBusserController --> IBusService
+    KritiskeBusserController --> INotifikationsService
+    KritiskeBusserController --> BusViewModel
+    KritiskeBusserController --> OpladningsforslagViewModel
+    KritiskeBusserController --> NotifikationsViewModel
+    BusService ..|> IBusService
+    NotifikationsService ..|> INotifikationsService
+    BusService --> Bus
+    BusService --> Opladningsforslag
+    NotifikationsService --> Notifikation

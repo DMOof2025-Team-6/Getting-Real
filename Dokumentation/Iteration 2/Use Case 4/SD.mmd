@@ -1,0 +1,41 @@
+sequenceDiagram
+    actor DM as Driftsmedarbejder
+    participant UI as Brugergrænseflade
+    participant CS as ControlSystem
+    participant BS as BusService
+    participant NS as NotifikationsService
+    CS->>BS: checkKritiskeBusser()
+    BS->>BS: identifierBusserMedLavtBatteri()
+    BS-->>CS: liste af kritiske busser
+    DM->>UI: åbnKritiskeBusOversigt()
+    UI->>CS: getKritiskeBusser()
+    CS-->>UI: liste af kritiske busser
+    UI-->>DM: viser kritiske busser
+    DM->>UI: vælgBus(busID)
+    UI->>CS: getOpladningsforslag(busID)
+    CS->>BS: beregnOpladningstid(busID)
+    BS-->>CS: estimeret opladningstid
+    CS-->>UI: opladningsforslag
+    UI-->>DM: viser opladningsforslag
+    DM->>UI: markerTilOpladning(busID)
+    UI->>CS: startOpladning(busID)
+    CS->>BS: opdaterBusStatus(busID, UNDER_OPLADNING)
+    BS-->>CS: statusOpdateret
+    CS->>NS: opretNotifikation(busID, "Bus sat til opladning")
+    NS-->>CS: notifikationOprettet
+    CS-->>UI: bekræftelse
+    UI-->>DM: viser bekræftelse
+    Note over CS,NS: Når batteriniveau < 20%
+    BS->>CS: rapporterLavtBatteri(busID)
+    CS->>NS: opretNotifikation(busID, LAV_BATTERI)
+    NS-->>CS: notifikationOprettet
+    CS->>UI: visNotifikation(busID)
+    UI-->>DM: viser lavt batteri advarsel
+    DM->>UI: markerKlarTilDrift(busID)
+    UI->>CS: afslutOpladning(busID)
+    CS->>BS: opdaterBusStatus(busID, KLAR_TIL_DRIFT)
+    BS-->>CS: statusOpdateret
+    CS->>NS: opretNotifikation(busID, "Bus klar til drift")
+    NS-->>CS: notifikationOprettet
+    CS-->>UI: bekræftelse
+    UI-->>DM: viser bekræftelse
