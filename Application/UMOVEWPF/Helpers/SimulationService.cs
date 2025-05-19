@@ -14,7 +14,7 @@ namespace UMOVEWPF.Helpers
 
         public bool IsRunning => _timer.IsEnabled;
 
-        public SimulationService(ObservableCollection<Bus> buses, Weather weather, double averageSpeedKmh = 47)
+        public SimulationService(ObservableCollection<Bus> buses, Weather weather, double averageSpeedKmh = 20)
         {
             _buses = buses;
             _weather = weather;
