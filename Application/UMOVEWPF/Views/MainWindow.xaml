@@ -30,12 +30,38 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <!-- Venstre panel: Navigation og logo (Skal justeres) -->
-            <StackPanel Grid.Column="0" Grid.RowSpan="2" Background="#F7F7F7" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,0,0">
-                <Image Source="/UMOVEWPF;component/Images/UmoveBillede.png" Height="60" Margin="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-                <Button Content="Bus Administration" Margin="10,10,0,0" Height="35" Width="150" Command="{Binding ShowBusAdminCommand}" HorizontalAlignment="Left"/>
-                <Button Content="Batteri Status" Margin="10,10,0,0" Height="35" Width="150" Command="{Binding ShowBatteryStatusCommand}" HorizontalAlignment="Left"/>
-                <Button Content="Kritiske Busser" Margin="10,10,0,0" Height="35" Width="150" Command="{Binding ShowCriticalBusesCommand}" HorizontalAlignment="Left"/>
-                <Button Content="Opladningsplan" Margin="10,10,0,0" Height="35" Width="150" Command="{Binding ShowChargingPlanCommand}" HorizontalAlignment="Left"/>
+            <StackPanel Grid.Column="0" Grid.RowSpan="2" Background="#F7F7F7" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Height="700" Width="200">
+                <StackPanel.Resources>
+                    <Style x:Key="NavButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="#FF9900"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="18"/>
+                        <Setter Property="Height" Value="50"/>
+                        <Setter Property="Width" Value="180"/>
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="10" SnapsToDevicePixels="True">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#005A9E"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Resources>
+                <Image Source="/UMOVEWPF;component/Images/UmoveBillede.png" Height="60" Margin="0,10,0,30" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <Button Content="Bus Administration" Style="{StaticResource NavButtonStyle}" Command="{Binding ShowBusAdminCommand}"/>
+                <Button Content="Opladningsplan" Style="{StaticResource NavButtonStyle}" Command="{Binding ShowChargingPlanCommand}"/>
+                <Button Content="Bus Router" Style="{StaticResource NavButtonStyle}" Command="{Binding ShowBusRouterCommand}"/>
             </StackPanel>
             <!-- Topbar: Viser nuværende "side" -->
             <Border Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0" Background="White" Height="80">

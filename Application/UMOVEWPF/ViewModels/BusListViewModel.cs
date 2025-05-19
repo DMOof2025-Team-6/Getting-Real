@@ -124,7 +124,7 @@ namespace UMOVEWPF.ViewModels
         private void UpdateBatteryStatus()
         {
             // Simuler 30 minutters kørsel for hver bus i drift
-            double averageSpeedKmh = 47;
+            double averageSpeedKmh = 20;
             double hours = 0.5; // 30 minutter
             foreach (var bus in Buses)
             {

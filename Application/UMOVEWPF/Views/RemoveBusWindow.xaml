@@ -8,8 +8,8 @@
         <TextBlock Text="Fjern bus" HorizontalAlignment="Center" Style="{StaticResource UmoveHeader}"/>
         <TextBlock Text="Er du sikker på, at du vil fjerne denne bus?" Margin="0,0,0,20" HorizontalAlignment="Center"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Fjern" Style="{StaticResource UmoveButton}" Width="90" Command="{Binding RemoveCommand}"/>
-            <Button Content="Annuller" Style="{StaticResource UmoveButton}" Width="90" Background="{StaticResource UmoveBlueBrush}" Command="{Binding CancelCommand}"/>
+            <Button Content="Fjern" Style="{StaticResource UmoveButton}" Width="90" Click="Yes_Click"/>
+            <Button Content="Annuller" Style="{StaticResource UmoveButton}" Width="90" Background="{StaticResource UmoveBlueBrush}" Click="No_Click"/>
         </StackPanel>
     </StackPanel>
 </Window> 

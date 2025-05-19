@@ -101,6 +101,7 @@ namespace UMOVEWPF.ViewModels
         public ICommand UpdateBatteryStatusCommand { get; }
         public ICommand UpdateBatteryLevelCommand { get; }
         public ICommand ToggleCriticalBusesCommand { get; }
+        public ICommand ShowBusRouterCommand { get; }
 
         private SimulationService _simService;
 
@@ -120,6 +121,7 @@ namespace UMOVEWPF.ViewModels
             UpdateBatteryLevelCommand = new RelayCommand(_ => UpdateBatteryLevel(), _ => SelectedBus != null && double.TryParse(BatteryLevelInput, out double _));
             ToggleCriticalBusesCommand = new RelayCommand(_ => ToggleCriticalBuses());
             ShowWeatherCommand = new RelayCommand(_ => ShowWeatherWindow());
+            ShowBusRouterCommand = new RelayCommand(_ => ShowBusRouter());
             FilteredBuses = new ObservableCollection<Bus>();
 
             Weather.PropertyChanged += (s, e) =>
@@ -206,6 +208,7 @@ namespace UMOVEWPF.ViewModels
         private void ShowBatteryStatus() => CurrentView = "Batteri Status";
         private void ShowCriticalBuses() => CurrentView = "Kritiske Busser";
         private void ShowChargingPlan() => CurrentView = "Opladningsplan";
+        private void ShowBusRouter() => CurrentView = "Bus Router";
 
         /// <summary>
         /// Filtrerer busserne baseret på søgetekst og kritiske busser filter
@@ -237,7 +240,7 @@ namespace UMOVEWPF.ViewModels
 
         private async void UpdateBatteryStatus()
         {
-            double averageSpeedKmh = 47;
+            double averageSpeedKmh = 20;
             double hours = 0.5; // 30 minutter
             double consumptionMultiplier = Weather.ConsumptionMultiplier;
             DateTime simulatedNow = DateTime.Now;
