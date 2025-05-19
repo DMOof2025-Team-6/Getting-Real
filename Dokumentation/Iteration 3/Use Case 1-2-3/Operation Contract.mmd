@@ -1,0 +1,8 @@
+%% Operation Contract - CombinedOperations()
+classDiagram
+    class CombinedBusOperations {
+        Input: Bus.Id, status, model, batteri mv.
+        Precondition: Korrekte inputdata og eksisterende filstruktur
+        Postcondition: Bus oprettes, redigeres eller slettes. Batteristatus vises eller opdateres
+        SideEffect: Fil opdateres
+    }

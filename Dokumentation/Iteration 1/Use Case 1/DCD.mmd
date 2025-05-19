@@ -1,17 +1,42 @@
+%%DCD (Design Class Diagram) for Use Case 1
 classDiagram
+    class AddEditBusViewModel {
+        - Bus bus
+        + SaveCommand()
+        + UpdateCommand()
+    }
+ 
+    class BusListViewModel {
+        + ObservableCollection<Bus> Buses
+        + DeleteCommand()
+        + LoadCommand()
+    }
+ 
     class Bus {
-        +string ID
-        +double BatteriCapacity
-        +double Usage
-        +Update(Batterikapacity, Usage)
+        +string Id
+        +BusStatus Status
+        +double BatteryLevel
+        +BusModel Model
+    }
+ 
+    class FileHelper {
+        +List<Bus> LoadBuses()
+        +void SaveBuses(List<Bus>)
+        +void DeleteBus(string id)
+        +void UpdateBus(Bus bus)
     }
 
-    class Garage {
-        +List<Bus> Busses
-        +AddBus(Bus bus)
-        +EditBus(string id, double newBatteryCapacity, double newBettertyUsage)
-        +RemoveBus(string id)
-        +GetAllBuses() List<Bus>
+    class BusStatus {
+        <<enumeration>>
     }
-    
-    Garage "1" --> "*" Bus
+
+    class BusModel {
+        <<enumeration>>
+    }
+ 
+    AddEditBusViewModel --> Bus
+    AddEditBusViewModel --> FileHelper
+    BusListViewModel --> FileHelper
+    BusListViewModel --> Bus
+    Bus --> BusStatus
+    Bus --> BusModel

@@ -1,16 +1,32 @@
+%% DCD (Design Class Diagram) for Use Case 6
 classDiagram
+    class BusDetailViewModel {
+        + Bus SelectedBus
+        + LoadBusDetailsCommand()
+    }
+ 
     class Bus {
         +string Id
-        +string RouteId
-        +bool IsDriving
-        +int BatteryLevel
-        +double KhwPerHour
-        +string GetStatus()
+        +double BatteryLevel
+        +BusStatus Status
+        +BusModel Model
+        +DateTime LastStatusUpdate
     }
-
-    class BusService {
-        +List<Bus> Buses
+ 
+    class BusDetailService {
         +Bus GetBusById(string id)
+        +bool ValidateBus(Bus bus)
     }
 
-    BusService --> Bus
+    class BusStatus {
+        <<enumeration>>
+    }
+
+    class BusModel {
+        <<enumeration>>
+    }
+ 
+    BusDetailViewModel --> BusDetailService
+    BusDetailViewModel --> Bus
+    Bus --> BusStatus
+    Bus --> BusModel

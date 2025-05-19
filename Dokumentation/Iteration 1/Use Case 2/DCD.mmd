@@ -1,40 +1,40 @@
+%% DCD (Design Class Diagram) for Use Case 2
 classDiagram
+    class BusListViewModel {
+        + ObservableCollection<Bus> Buses
+        + LoadBatteryStatusCommand()
+        + FilterLowBatteryCommand()
+        + SearchBusByIdCommand()
+        + SortByBatteryLevelCommand()
+    }
+ 
     class Bus {
-        +string ID
-        +double BatteryCapacity
-        +double CurrentCharge
-        +double kmPerKWh
-        +double KmPerLiter
-        +double CurrentChargeKWh
-        +int CurrentChargePercent
-        +double ChargerSpeed
-        +TimeSpan OperationalTime
-        +string Location
-        +double AverageSpeed
+        +string Id
+        +BusStatus Status
+        +double BatteryLevel
+        +BusModel Model
+    }
+ 
+    class SimulationService {
+        +void UpdateBatteryStatus()
+        +double EstimateRemainingTime(Bus bus)
+    }
+ 
+    class AlertService {
+        +List<Bus> GetLowBatteryBuses(double threshold)
+        +void SortByBatteryLevel(List<Bus>)
     }
 
-    class Garage {
-        -double LowBatteryTreshold
-        +List<Bus> Busses
-        +enum BusStatus
-        +GetAllBuses() List<Bus>
-        +GetBatteryStatus() void
-        +FilterBatteryStatus() void
-        +GetBusStatus() void
-        +GetBatteryTimeLeft() void
-        +GetChargingTimeLeft() void
-        +SortByCurrentCharge() void
-        +PercentageBatteryUsePerHour() void
-    }
-
-    class BusStatus{
+    class BusStatus {
         <<enumeration>>
-        InRoute
-        Free
-        Garage
-        Charging
-        Repair
     }
-    
-    Garage "1" --> "*" Bus
-    Bus -- BusStatus : has a
+
+    class BusModel {
+        <<enumeration>>
+    }
+ 
+    BusListViewModel --> Bus
+    BusListViewModel --> SimulationService
+    BusListViewModel --> AlertService
+    Bus --> BusStatus
+    Bus --> BusModel
