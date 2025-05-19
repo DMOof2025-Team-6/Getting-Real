@@ -1,0 +1,27 @@
+classDiagram
+	class BusListViewModel{
+		+Buses: ObservableCollection~Bus~
+		+SelectedBus: Bus
+		+ICommand UpdateBaterLevelCommand
+	}
+
+	class Bus {
+		+BusID: string	
+		+RegistrationNumber: string
+		+BatteryInfo: BatterInfo
+		+UpdateBatteryLevel(newLevel: double)
+	}
+
+	class BatteryService {		
+		+GetBatteryLevel(busID: string)
+	}
+
+	class BatteryInfo {
+		+BatteryPercentage: double
+		+LastUpdated: DateTime
+		+Update(newLevel: double)
+	}
+
+	BusListViewModel  -->  BatteryService : bruger
+	BusListViewModel --> Bus : indeholder
+	Bus --> BatteryInfo : har

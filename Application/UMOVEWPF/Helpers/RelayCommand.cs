@@ -27,7 +27,6 @@ namespace UMOVEWPF.Helpers
         /// Returnerer true hvis kommandoen må aktiveres
         /// </summary>
         public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter); //Hvis den er 0 kan den udføres, ellers ikke. God til brug med knapper.
-        
         /// <summary>
         /// Udfører den tilknyttede metode
         /// </summary>
@@ -42,4 +41,4 @@ namespace UMOVEWPF.Helpers
             remove => CommandManager.RequerySuggested -= value;
         }
     }
-} 
+}

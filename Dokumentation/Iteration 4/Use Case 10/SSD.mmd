@@ -1,0 +1,36 @@
+sequenceDiagram
+    actor DM as Driftsmedarbejder
+    actor IT as IT-afdeling
+    participant UI as Brugergrænseflade
+    participant BS as BatteriService
+    participant AR as AnalyseRapportGenerator
+    participant DR as DataRepository
+    participant ES as ExportService
+
+    %% Hent batterihistorik
+    DM->>UI: vælgBatterislitageAnalyse()
+    UI->>BS: hentBatteriMålinger()
+    BS->>DR: getBatteriMålingerForAlleBusser()
+    DR-->>BS: liste af batterimålinger
+    BS-->>UI: vis batterimålinger
+
+    %% Generer detaljeret analyse
+    DM->>UI: genererDetailjedAnalyse()
+    UI->>AR: genererBatteriAnalyseRapport()
+    AR->>BS: beregnKapacitetsTab()
+    AR->>BS: identificerVedligeholdelsesanbefalinger()
+    BS-->>AR: liste af anbefalinger
+    AR-->>UI: detaljeret analyserapport
+    UI-->>DM: vis analyserapport
+
+    %% Eksporter data
+    IT->>UI: vælgDataeksport()
+    UI->>AR: forberedRapportTilEksport()
+    AR->>ES: eksporterRapport(format)
+    ES-->>IT: eksporteret fil
+
+    %% Vedligeholdelsesanbefaling
+    Note over BS: Identificerer bus med kritisk batterislitage
+    BS->>AR: genererVedligeholdelsesanbefaling()
+    AR->>UI: visVedligeholdelsesanbefaling()
+    UI-->>DM: viser vedligeholdelsesanbefaling

@@ -1,34 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="UMOVEWPF.Converters.NullToVisibilityConverter" BaseTypeListCollapsed="true">
-    <Position X="3.25" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\Converters.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="UMOVEWPF.Converters.BoolToColorConverter" BaseTypeListCollapsed="true">
-    <Position X="3.25" Y="1" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\Converters.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
   <Class Name="UMOVEWPF.Converters.EnumToListConverter" BaseTypeListCollapsed="true">
     <Position X="5.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\Converters.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="UMOVEWPF.Converters.ProgressBarColorConverter" BaseTypeListCollapsed="true">
-    <Position X="5" Y="2.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\Converters.cs</FileName>
+      <FileName>Converters\EnumToListConverter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
@@ -43,7 +19,7 @@
   <Class Name="UMOVEWPF.Models.Bus">
     <Position X="13.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AEABBEiEBEACAAAAIkAAAAIQhACAAAAAEAgAAgAAAMA=</HashCode>
+      <HashCode>AEABBEiEBkACABAAKsAAAAIQhACAAAAIEAgAAgAAAMA=</HashCode>
       <FileName>Models\Bus.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -51,10 +27,24 @@
   <Class Name="UMOVEWPF.ViewModels.MainViewModel" Collapsed="true">
     <Position X="0.5" Y="0.5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>DAAAACACAgiABAFkMIMKAACF0EEAYEIAEhAABICAAgA=</HashCode>
+      <HashCode>HBAAACACQgiABAl0MIMKAUAFxEEEYEIQEFAABIKAAgo=</HashCode>
       <FileName>ViewModels\MainViewModel.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="UMOVEWPF.ViewModels.BusListViewModel">
+    <Position X="1.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAACAAAAAADAAAgAICAAAEAAAEQEIAEBCIBIAAAkA=</HashCode>
+      <FileName>ViewModels\BusListViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UMOVEWPF.ViewModels.SettingsViewModel">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIDACAAGAAAgAAAAEAAAEAAAAAAAAUABE=</HashCode>
+      <FileName>ViewModels\SettingsViewModel.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Enum Name="UMOVEWPF.Models.RouteName">
     <Position X="11" Y="3.25" Width="1.5" />

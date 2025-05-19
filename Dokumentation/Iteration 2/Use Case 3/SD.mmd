@@ -1,0 +1,16 @@
+sequenceDiagram
+    participant Driftsmedarbejder
+    participant UI
+    participant BusListViewModel
+    participant Bus
+    participant BatteryInfo
+
+    Driftsmedarbejder->>System: Opdater Batteristatus (Klick)
+    UI->>BusListViewModel: UpdateBatterLevel
+    BusListViewModel->>Bus: GetBatteryLevel
+    Bus-->>BusListViewModel: Return Battery Level (f.eks. 46%)
+    BusListViewModel->>Bus: UpdateBatteryLevel
+    Bus->>BatteryInfo: Update
+    BatteryInfo-->>Bus: BatteryInfo updated
+    Bus-->>BusListViewModel: Update Complete
+    BusListViewModel-->>UI: Display("ny værdi")

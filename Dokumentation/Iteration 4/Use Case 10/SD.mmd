@@ -1,0 +1,20 @@
+sequenceDiagram
+    actor DM as Driftsmedarbejder
+    actor IT as IT-afdeling
+    participant S as System
+
+    %% Hent batterimålinger
+    DM->>S: hentBatterihistorik()
+    S-->>DM: viser batterimålinger
+
+    %% Generer analyse
+    DM->>S: genererBatteriAnalyse()
+    S-->>DM: viser detaljeret analyserapport
+
+    %% Eksporter data
+    IT->>S: eksporterBatteriData(format)
+    S-->>IT: genererer eksportfil
+
+    %% Vedligeholdelsesanbefaling
+    DM->>S: hentVedligeholdelsesanbefalinger()
+    S-->>DM: viser vedligeholdelsesanbefalinger

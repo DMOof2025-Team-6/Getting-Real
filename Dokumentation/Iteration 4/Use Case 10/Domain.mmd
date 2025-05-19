@@ -1,0 +1,63 @@
+classDiagram
+    class Bus {
+        +int BusID
+        +String BusNummer
+        +List~BatteriMåling~ BatteriHistorik
+        +double GennemsnitligKapacitetsTab()
+    }
+
+    class BatteriMåling {
+        +int MålingID
+        +int BusID
+        +DateTime Tidspunkt
+        +double Kapacitet
+        +double LadeCyklus
+        +double Temperatur
+        +double SundhedsTilstand
+    }
+
+    class BatteriAnalyseRapport {
+        +int RapportID
+        +DateTime GenereretstidsPunkt
+        +int AntalBusser
+        +double GennemsnitligKapacitetsTab
+        +List~Bus~ AnalysereteBusser
+        +ExportFormat ExportFormat
+    }
+
+    class ExportFormat {
+        <<enumeration>>
+        CSV
+        XLSX
+        JSON
+        PDF
+    }
+
+    class AnalyseKriterier {
+        +DateTime StartDato
+        +DateTime SlutDato
+        +int MinimumAntalCyklusser
+        +double MinimumKapacitetsTærskel
+        +List~Bus~ FilterBusser()
+    }
+
+    class Vedligeholdelsesanbefaling {
+        +int AnbefalingID
+        +int BusID
+        +VedligeholdelsesType Type
+        +string Beskrivelse
+        +DateTime ForeslåetDato
+    }
+
+    class VedligeholdelsesType {
+        <<enumeration>>
+        BATTERISKIFT
+        KALIBRERING
+        YDERLIGERE_INSPEKTION
+        INGEN
+    }
+
+    Bus "1" -- "0..*" BatteriMåling : har
+    Bus "1" -- "0..*" Vedligeholdelsesanbefaling : får
+    BatteriAnalyseRapport "1" -- "0..*" Bus : indeholder
+    AnalyseKriterier -- BatteriAnalyseRapport : genererer
