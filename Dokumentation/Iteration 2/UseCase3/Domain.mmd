@@ -1,0 +1,28 @@
+classDiagram
+%% ========= DOMÆNE =========
+class Bus {
+    +BusId: string
+    +BatteriNiveauProcent: double   %% felt der opdateres manuelt
+    +Model: BusModel
+    +Status: BusStatus
+}
+
+class BusModel {
+    <<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+
+class BusStatus {
+    <<enumeration>>
+    PåRute
+    Afløser
+    Returnerer
+    Oplader
+    Garage
+}
+
+Bus --> BusModel
+Bus --> BusStatus

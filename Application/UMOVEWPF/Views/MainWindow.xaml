@@ -170,8 +170,7 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                         <Button Content="Vejr" Width="110" Height="35" Background="#005A9E" Foreground="White" FontWeight="Bold" 
                                 Margin="0,0,10,0" Command="{Binding ShowWeatherCommand}"/>
-                        <Button Content="Simuler 30 min" Width="110" Height="35" Background="#FF9900" Foreground="White" FontWeight="Bold" 
-                                Command="{Binding UpdateBatteryStatusCommand}"/>
+                        <Button Content="{Binding TurboSimulerButtonText}" Width="110" Height="35" Background="#FF9900" Foreground="White" FontWeight="Bold" Command="{Binding TurboSimulerCommand}"/>
                     </StackPanel>
                 </StackPanel>
                 <!-- Detaljeret Batteristatus til højre. (Ny grid) -->

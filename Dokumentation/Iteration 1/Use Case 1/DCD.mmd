@@ -1,42 +1,54 @@
-%%DCD (Design Class Diagram) for Use Case 1
 classDiagram
-    class AddEditBusViewModel {
-        - Bus bus
-        + SaveCommand()
-        + UpdateCommand()
-    }
- 
-    class BusListViewModel {
-        + ObservableCollection<Bus> Buses
-        + DeleteCommand()
-        + LoadCommand()
-    }
- 
-    class Bus {
-        +string Id
-        +BusStatus Status
-        +double BatteryLevel
-        +BusModel Model
-    }
- 
-    class FileHelper {
-        +List<Bus> LoadBuses()
-        +void SaveBuses(List<Bus>)
-        +void DeleteBus(string id)
-        +void UpdateBus(Bus bus)
-    }
+%% ============ DOMAIN ============
+class Bus {
+    +BusId: string
+    +BatteryCapacity: double
+    +Consumption: double
+    +Model: BusModel              %% nyt felt
+}
 
-    class BusStatus {
-        <<enumeration>>
-    }
+class BusModel {
+    <<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
 
-    class BusModel {
-        <<enumeration>>
-    }
- 
-    AddEditBusViewModel --> Bus
-    AddEditBusViewModel --> FileHelper
-    BusListViewModel --> FileHelper
-    BusListViewModel --> Bus
-    Bus --> BusStatus
-    Bus --> BusModel
+%% ============ FILE IO ============
+class FileHelper {
+    +SaveBusesAsync(buses: IEnumerable~Bus~): Task
+    +LoadBusesAsync(): Task<List~Bus~>
+}
+
+%% ============ PRESENTATION (MVVM) ============
+class BusListViewModel {
+    -fileHelper: FileHelper
+    +Buses: ObservableCollection~Bus~
+    +AddCommand(): void
+    +EditCommand(): void
+    +DeleteCommand(): void
+    +Reload(): Task
+}
+
+class AddEditBusViewModel {
+    -fileHelper: FileHelper
+    +Bus: Bus
+    +SaveCommand(): Task
+    +CancelCommand(): void
+    +IsNew: bool
+}
+
+class MainViewModel {
+    -fileHelper: FileHelper
+    +BusListVM: BusListViewModel
+    +InitializeAsync(): Task
+}
+
+%% ============ RELATIONS ============
+BusListViewModel  ..> FileHelper : uses
+AddEditBusViewModel ..> FileHelper : uses
+MainViewModel ..> FileHelper : uses
+BusListViewModel  --> Bus        : shows list
+AddEditBusViewModel --> Bus      : edits/creates
+Bus --> BusModel                 : has

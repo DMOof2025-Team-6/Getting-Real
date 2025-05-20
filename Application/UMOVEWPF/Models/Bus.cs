@@ -150,6 +150,10 @@ namespace UMOVEWPF.Models
 
         public string DisplayText => $"{BusId} | {Model} | {BatteryLevel:F1}%";
 
+        public Bus ReplacingBus { get; set; }
+
+        public double TimeInCurrentStatus { get; set; }
+
         // Beregn tid til 13% batteri tilbage ved 20 km/t
         public TimeSpan TimeLeftUntil13Percent(double averageSpeedKmh = 20)
         {

@@ -1,41 +1,85 @@
-%% DCD (Design Class Diagram) for Use Case 1 + 2 + 3
 classDiagram
-    class BusListViewModel {
-        + ObservableCollection<Bus> Buses
-        + SaveBusCommand()
-        + DeleteBusCommand()
-        + LoadBatteryStatusCommand()
-        + UpdateBatteryLevelCommand()
-    }
- 
-    class FileHelper {
-        +List<Bus> LoadBuses()
-        +void SaveBuses(List<Bus>)
-        +void DeleteBus(string id)
-    }
- 
-    class AlertService {
-        +List<Bus> GetLowBatteryBuses(double threshold)
-        +void SortByBatteryLevel(List<Bus>)
-    }
- 
-    class SimulationService {
-        +void UpdateBatteryStatus()
-        +double EstimateRemainingTime(Bus bus)
-    }
- 
-    class Bus {
-        +string Id
-        +double BatteryLevel
-        +BusStatus Status
-        +BusModel Model
-    }
- 
-    BusListViewModel --> FileHelper
-    BusListViewModel --> AlertService
-    BusListViewModel --> SimulationService
-    FileHelper --> Bus
-    AlertService --> Bus
-    SimulationService --> Bus
-    Bus --> BusStatus
-    Bus --> BusModel
+%% =========== DOMAIN ===========
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +Route: RouteName
+    +BatteryCapacity: double
+    +BatteryLevel: double
+    +Consumption: double
+    +Status: BusStatus
+    +TimeLeftUntil13Percent(avgSpeedKmh: double): TimeSpan
+}
+class BusModel { <<enumeration>> }
+class RouteName { <<enumeration>> }
+class BusStatus { <<enumeration>> }
+Bus --> BusModel
+Bus --> RouteName
+Bus --> BusStatus
+
+%% =========== FILE I/O ===========
+class FileHelper {
+    +SaveBusesAsync(buses: IEnumerable~Bus~): Task
+    +LoadBusesAsync(): Task<List~Bus~>
+}
+
+%% =========== SERVICES ===========
+class SimulationService {
+    +Start(): void
+    +Stop(): void
+    +SimulateTick(): void
+    +Buses: ObservableCollection~Bus~
+}
+SimulationService --> Bus
+
+%% =========== PRESENTATION ===========
+class BusListViewModel {
+    -fileHelper: FileHelper
+    -simService: SimulationService
+    +Buses: ObservableCollection~Bus~
+    +AddCmd(): void            %% UC1
+    +EditCmd(): void           %% UC1
+    +DeleteCmd(): void         %% UC1
+    +FilterLow(threshold): IEnumerable~Bus~   %% UC2
+    +Search(busId: string): Bus               %% UC2
+    +SortRunning(): IEnumerable~Bus~          %% UC2
+    +UpdateBatteryCmd(): void                 %% UC3
+    +Reload(): Task
+}
+
+class AddEditBusViewModel {
+    -fileHelper: FileHelper
+    +Bus: Bus
+    +IsNew: bool
+    +SaveCmd(): Task
+    +CancelCmd(): void
+}
+
+class UpdateBatteryViewModel {
+    -fileHelper: FileHelper
+    +Bus: Bus
+    +NewLevel: double
+    +SaveCmd(): Task
+    +CancelCmd(): void
+}
+
+class BusDetailViewModel {
+    +SelectedBus: Bus
+}
+
+class MainViewModel {
+    -fileHelper: FileHelper
+    +BusListVM: BusListViewModel
+    +BusDetailVM: BusDetailViewModel
+    +InitializeAsync(): Task
+}
+
+%% -------- RELATIONS --------
+MainViewModel --> BusListViewModel
+MainViewModel --> BusDetailViewModel
+BusListViewModel ..> FileHelper
+BusListViewModel ..> SimulationService
+AddEditBusViewModel ..> FileHelper
+UpdateBatteryViewModel ..> FileHelper
+BusListViewModel --> Bus
+BusDetailViewModel --> Bus

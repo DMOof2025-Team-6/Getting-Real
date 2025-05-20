@@ -1,0 +1,6 @@
+sequenceDiagram
+actor Driftsmedarbejder
+participant System
+
+Driftsmedarbejder ->> System: UpdateBattery(busId, newPercent)
+System -->> Driftsmedarbejder: BekræftOpdateret
