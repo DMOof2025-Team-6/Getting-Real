@@ -1,54 +1,31 @@
 classDiagram
-    class Bus {
-        +int BusID
-        +int BatteriNiveau
-        +BusStatus Status
-        +DateTime SidsteOpladning
-        +bool ErKritisk()
-        +int EstimeretOpladningstid()
-    }
-   
-    class BusStatus {
-       
-        I_DRIFT
-        UNDER_OPLADNING
-        KLAR_TIL_DRIFT
-        UDE_AF_DRIFT
-    }
-   
-    class Notifikation {
-        +int NotifikationID
-        +int BusID
-        +NotifikationsType Type
-        +String Besked
-        +DateTime Tidspunkt
-        +bool ErLæst
-    }
-   
-    class NotifikationsType {
-       
-        LAV_BATTERI
-        OPLADNING_PÅKRÆVET
-        OPLADNING_FÆRDIG
-    }
-   
-    class Opladningsforslag {
-        +int ForslagID
-        +int BusID
-        +DateTime AnbefaletStartTid
-        +int EstimeretVarighed
-        +bool ErAccepteret
-    }
-   
-    class Garage {
-        +int MedarbejderID
-        +String Navn
-        +seFritiske()
-        +markereBusUnderOpladning()
-        +markereBusKlarTilDrift()
-    }
-   
-    Bus "1" -- "0..*" Notifikation
-    Bus "1" -- "0..*" Opladningsforslag
-    Garage "1" -- "0..*" Opladningsforslag : håndterer
-    Garage "1" -- "0..*" Bus : administrerer
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +BatteriKapacitetKWh: double
+    +BatteriNiveauProcent: double
+    +ForbrugKWhPrKm: double
+    +Status: BusStatus
+    +ErKritisk: bool                 %% BatteryLevel < 20 %
+    +BeregnOpladningstid(kW: double): TimeSpan
+}
+
+class BusModel {
+    <<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+
+class BusStatus {
+    <<enumeration>>
+    PåRute
+    Afløser
+    Returnerer
+    Oplader
+    Garage
+}
+
+Bus --> BusModel
+Bus --> BusStatus

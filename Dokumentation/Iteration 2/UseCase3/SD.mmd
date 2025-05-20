@@ -1,0 +1,23 @@
+sequenceDiagram
+actor Driftsmedarbejder
+participant ListUI    as "BusListView"
+participant ListVM    as "BusListViewModel"
+participant UpdUI     as "UpdateBatteryDialog"
+participant UpdVM     as "UpdateBatteryViewModel"
+participant FileH     as "FileHelper"
+
+%% ---- Åbn dialog ----
+Driftsmedarbejder ->> ListUI: Vælg bus + klik “Opdater batteri”
+ListUI ->> ListVM: UpdateBatteryCmd(bus)
+ListVM ->> UpdUI: Åbn dialog (passer bus)
+
+%% ---- Gem ny værdi ----
+Driftsmedarbejder ->> UpdUI: Indtast 65 % + klik Gem
+UpdUI ->> UpdVM: SaveCmd()
+UpdVM ->> Bus: UpdateBatteryLevel(65)
+UpdVM ->> FileH: SaveBusesAsync(buses)
+FileH -->> UpdVM: OK
+UpdVM -->> UpdUI: OK
+UpdUI -->> ListVM: Luk dialog
+ListVM ->> ListUI: Refresh liste
+ListUI ->> Driftsmedarbejder: Vis opdateret procent

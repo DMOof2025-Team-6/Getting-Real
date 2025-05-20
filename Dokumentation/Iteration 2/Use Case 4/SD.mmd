@@ -1,41 +1,45 @@
 sequenceDiagram
-    actor DM as Driftsmedarbejder
-    participant UI as Brugergrænseflade
-    participant CS as ControlSystem
-    participant BS as BusService
-    participant NS as NotifikationsService
-    CS->>BS: checkKritiskeBusser()
-    BS->>BS: identifierBusserMedLavtBatteri()
-    BS-->>CS: liste af kritiske busser
-    DM->>UI: åbnKritiskeBusOversigt()
-    UI->>CS: getKritiskeBusser()
-    CS-->>UI: liste af kritiske busser
-    UI-->>DM: viser kritiske busser
-    DM->>UI: vælgBus(busID)
-    UI->>CS: getOpladningsforslag(busID)
-    CS->>BS: beregnOpladningstid(busID)
-    BS-->>CS: estimeret opladningstid
-    CS-->>UI: opladningsforslag
-    UI-->>DM: viser opladningsforslag
-    DM->>UI: markerTilOpladning(busID)
-    UI->>CS: startOpladning(busID)
-    CS->>BS: opdaterBusStatus(busID, UNDER_OPLADNING)
-    BS-->>CS: statusOpdateret
-    CS->>NS: opretNotifikation(busID, "Bus sat til opladning")
-    NS-->>CS: notifikationOprettet
-    CS-->>UI: bekræftelse
-    UI-->>DM: viser bekræftelse
-    Note over CS,NS: Når batteriniveau < 20%
-    BS->>CS: rapporterLavtBatteri(busID)
-    CS->>NS: opretNotifikation(busID, LAV_BATTERI)
-    NS-->>CS: notifikationOprettet
-    CS->>UI: visNotifikation(busID)
-    UI-->>DM: viser lavt batteri advarsel
-    DM->>UI: markerKlarTilDrift(busID)
-    UI->>CS: afslutOpladning(busID)
-    CS->>BS: opdaterBusStatus(busID, KLAR_TIL_DRIFT)
-    BS-->>CS: statusOpdateret
-    CS->>NS: opretNotifikation(busID, "Bus klar til drift")
-    NS-->>CS: notifikationOprettet
-    CS-->>UI: bekræftelse
-    UI-->>DM: viser bekræftelse
+actor Driftsmedarbejder
+participant UI      as "BusListView"
+participant VM      as "BusListViewModel"
+participant Sim     as "SimulationService"
+participant FileH   as "FileHelper"
+participant Bus     as "Bus obj."
+
+%% ----- Kritisk oversigt -----
+Driftsmedarbejder ->> UI: Klik “Kritiske busser”
+UI ->> VM: ShowCriticalCmd()
+VM ->> Sim: Buses
+Sim -->> VM: ObservableCollection<Bus>
+VM ->> VM: filter IsCritical
+VM -->> UI: liste
+UI ->> Driftsmedarbejder: Vis liste
+
+%% ----- Marker til opladning -----
+Driftsmedarbejder ->> UI: Vælg bus + “Oplader”
+UI ->> VM: MarkChargingCmd(bus)
+VM ->> Bus: Status = Oplader
+VM ->> FileH: SaveBusesAsync(Sim.Buses)
+FileH -->> VM: OK
+VM -->> UI: Refresh
+
+%% ----- Marker klar igen -----
+Driftsmedarbejder ->> UI: “Klar”
+UI ->> VM: MarkReadyCmd(bus)
+VM ->> Bus: Status = Garage
+VM ->> FileH: SaveBusesAsync(...)
+FileH -->> VM: OK
+VM -->> UI: Refresh
+
+%% ----- Foreslå opladning -----
+Driftsmedarbejder ->> UI: “Foreslå” på bus
+UI ->> VM: SuggestCharge(bus)
+VM ->> Bus: EstimateChargeTime(rateKW)
+Bus -->> VM: TimeSpan
+VM -->> UI: tid
+UI ->> Driftsmedarbejder: Vis forslag
+
+%% ----- System-notifikation (<20 %) -----
+Sim ->> VM: CriticalAlert(bus)
+VM ->> UI: Pop-up / rød markering
+UI ->> Driftsmedarbejder: Alarm

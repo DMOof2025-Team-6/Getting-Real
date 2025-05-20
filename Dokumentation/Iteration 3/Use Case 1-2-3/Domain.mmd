@@ -1,46 +1,30 @@
 classDiagram
-%% ========= DOMÆNE-ENTITETER =========
-class Bus {
-    +BusId: string
-    +Model: BusModel
-    +Rute: RuteNavn
-    +BatteriKapacitetKWh: double
-    +BatteriNiveauProcent: double
-    +ForbrugKWhPrKm: double
-    +Status: BusStatus
-    +BeregnResterendeDriftTid(gennemsnitsHastighedKmh: double): TimeSpan
-}
+    class Bus {
+        +string Id
+        +double BatteryLevel
+        +BusStatus Status
+        +BusModel Model
+    }
  
-class RuteNavn {
-<<enumeration>>
-    R1A
-    R10
-    R11
-    R13
-    R132
-    R133
-    R137
-    R139
-}
+    class FileHelper {
+        +List<Bus> LoadBuses()
+        +void SaveBuses(List<Bus>)
+        +void DeleteBus(string id)
+        +void UpdateBus(Bus bus)
+    }
  
-class BusModel {
-<<enumeration>>
-    MBeCitaro
-    YutongE12
-    BYDK9
-    Volvo7900E
-}
+    class AlertService {
+        +List<Bus> GetLowBatteryBuses(double threshold)
+        +void SortByBatteryLevel(List<Bus>)
+    }
  
-class BusStatus {
-<<enumeration>>
-    PåRute        %% Inroute
-    Afløser       %% Intercept
-    Returnerer
-    Oplader
-    Garage
-}
+    class SimulationService {
+        +void UpdateBatteryStatus()
+        +double EstimateRemainingTime(Bus bus)
+    }
  
-%% ========= RELATIONER =========
-Bus --> BusModel
-Bus --> BusStatus
-Bus --> RuteNavn
+    FileHelper --> Bus
+    AlertService --> Bus
+    SimulationService --> Bus
+    Bus --> BusStatus
+    Bus --> BusModel

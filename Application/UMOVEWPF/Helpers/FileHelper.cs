@@ -10,46 +10,57 @@ namespace UMOVEWPF.Helpers
     {
         private static readonly string BusesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "buses.txt");
         private static readonly string RoutesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "routes.txt");
+        private static readonly System.Threading.SemaphoreSlim _busesLock = new System.Threading.SemaphoreSlim(1, 1);
 
         public static async Task SaveBusesAsync(IEnumerable<Bus> buses)
         {
-            using (var sw = new StreamWriter(BusesFile, false))
+            await _busesLock.WaitAsync();
+            try
             {
-                foreach (var bus in buses)
+                using (var sw = new StreamWriter(BusesFile, false))
                 {
-                    await sw.WriteLineAsync($"{bus.BusId};{bus.Year};{bus.Route};{bus.BatteryLevel};{bus.Status};{bus.LastUpdate:O};{bus.Model}");
+                    foreach (var bus in buses)
+                    {
+                        await sw.WriteLineAsync($"{bus.BusId};{bus.Year};{bus.Route};{bus.BatteryLevel};{bus.Status};{bus.LastUpdate:O};{bus.Model}");
+                    }
                 }
             }
+            finally { _busesLock.Release(); }
         }
 
         public static async Task<List<Bus>> LoadBusesAsync()
         {
-            var buses = new List<Bus>();
-            if (!File.Exists(BusesFile))
-                return buses;
-
-            using (var sr = new StreamReader(BusesFile))
+            await _busesLock.WaitAsync();
+            try
             {
-                string line;
-                while ((line = await sr.ReadLineAsync()) != null)
+                var buses = new List<Bus>();
+                if (!File.Exists(BusesFile))
+                    return buses;
+
+                using (var sr = new StreamReader(BusesFile))
                 {
-                    var parts = line.Split(';');
-                    if (parts.Length >= 7)
+                    string line;
+                    while ((line = await sr.ReadLineAsync()) != null)
                     {
-                        buses.Add(new Bus
+                        var parts = line.Split(';');
+                        if (parts.Length >= 7)
                         {
-                            BusId = parts[0],
-                            Year = parts[1],
-                            Route = Enum.TryParse<RouteName>(parts[2], out var route) ? route : RouteName.None,
-                            BatteryLevel = double.TryParse(parts[3], out var lvl) ? lvl : 0,
-                            Status = Enum.TryParse<BusStatus>(parts[4], out var stat) ? stat : BusStatus.Garage,
-                            LastUpdate = DateTime.TryParse(parts[5], out var dt) ? dt : DateTime.Now,
-                            Model = Enum.TryParse<BusModel>(parts[6], out var model) ? model : BusModel.MBeCitaro
-                        });
+                            buses.Add(new Bus
+                            {
+                                BusId = parts[0],
+                                Year = parts[1],
+                                Route = Enum.TryParse<RouteName>(parts[2], out var route) ? route : RouteName.None,
+                                BatteryLevel = double.TryParse(parts[3], out var lvl) ? lvl : 0,
+                                Status = Enum.TryParse<BusStatus>(parts[4], out var stat) ? stat : BusStatus.Garage,
+                                LastUpdate = DateTime.TryParse(parts[5], out var dt) ? dt : DateTime.Now,
+                                Model = Enum.TryParse<BusModel>(parts[6], out var model) ? model : BusModel.MBeCitaro
+                            });
+                        }
                     }
                 }
+                return buses;
             }
-            return buses;
+            finally { _busesLock.Release(); }
         }
 
         public static async Task SaveRoutesAsync(IEnumerable<Route> routes)

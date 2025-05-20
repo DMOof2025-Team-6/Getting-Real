@@ -1,6 +1,15 @@
 sequenceDiagram
-    participant Driftsmedarbejder
-    participant System
+actor Driftsmedarbejder
+participant System as "BusAdministrations-system"
 
-    Driftsmedarbejder->>System: Indtast Bus ID, Batterikapacitet, Forbrug
-    System-->>Driftsmedarbejder: Bekræftelse på oprettelse/opdatering
+Driftsmedarbejder ->> System: HentAlleBusser()
+System -->> Driftsmedarbejder: ListeAfBusser
+
+Driftsmedarbejder ->> System: OpretBus(BusId, BatteriKapacitet, Forbrug)
+System -->> Driftsmedarbejder: BekræftOprettet
+
+Driftsmedarbejder ->> System: OpdaterBus(BusId, nyeStamdata)
+System -->> Driftsmedarbejder: BekræftOpdateret
+
+Driftsmedarbejder ->> System: FjernBus(BusId)
+System -->> Driftsmedarbejder: BekræftFjernet

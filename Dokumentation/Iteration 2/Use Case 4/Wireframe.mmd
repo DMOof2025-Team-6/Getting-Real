@@ -1,0 +1,22 @@
+﻿flowchart TD
+    %% pop-up farve
+    classDef alert fill:#ffebc2,stroke:#d88,color:#000
+
+    
+        direction TB
+        RefreshK["Opdater 🔄"]
+        List[[Tabel\nID • Model • % • Status]]
+
+        BtnCharge["Status:\nMarker Oplader"]
+        BtnReady["Status:\nMarker Garage"]
+        DialogEst["Dialog:\nForeslå opladningstid"]
+
+        RefreshK --> List
+        List --> BtnCharge
+        List --> BtnReady
+        List --> DialogEst
+    
+
+    AlertPop["⚠ Bus XYZ på 30 %"]
+    class AlertPop alert
+    AlertPop -.-> List

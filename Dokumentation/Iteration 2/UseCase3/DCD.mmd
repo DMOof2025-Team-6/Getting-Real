@@ -1,0 +1,33 @@
+classDiagram
+%% -------- DOMAIN --------
+class Bus {
+    +BusId: string
+    +BatteryLevel: double
+    +UpdateBatteryLevel(newPct: double): void
+}
+
+%% -------- FILE I/O --------
+class FileHelper {
+    +SaveBusesAsync(buses: IEnumerable~Bus~): Task
+    +LoadBusesAsync(): Task<List~Bus~>
+}
+
+%% -------- PRESENTATION --------
+class BusListViewModel {
+    -fileHelper: FileHelper
+    +Buses: ObservableCollection~Bus~
+    +UpdateBatteryCmd(): void
+}
+
+class UpdateBatteryViewModel {
+    -fileHelper: FileHelper
+    +Bus: Bus
+    +NewLevel: double
+    +SaveCmd(): Task            %% skriver til fil
+    +CancelCmd(): void
+}
+
+BusListViewModel ..> FileHelper
+UpdateBatteryViewModel ..> FileHelper
+BusListViewModel --> Bus       : selects
+UpdateBatteryViewModel --> Bus : modifies

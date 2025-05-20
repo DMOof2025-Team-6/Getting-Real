@@ -1,11 +1,6 @@
 classDiagram
-    class Bus {
-        +string ID
-        +double Batterikapacitet
-        +double Forbrug
-        
-    }
-    class Garage {
-        +List<Bus> Busser
-    }
-    Garage "1" --> "*" Bus : administrerer
+class Bus {
+    +string BusId
+    +double BatteriKapacitet
+    +double ForbrugKWhPrKm
+}

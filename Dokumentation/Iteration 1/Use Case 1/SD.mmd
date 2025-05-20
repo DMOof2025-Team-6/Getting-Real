@@ -1,15 +1,58 @@
 sequenceDiagram
-    participant Driftsmedarbejder
-    participant System
+actor Driftsmedarbejder
+participant UI        as "BusListe-UI"
+participant Service   as "BusService"
+participant Repo      as "BusRepository"
+participant FSRead    as "StreamReader"
+participant FSWrite   as "StreamWriter-tmp"
 
-    Driftsmedarbejder->>System: Tilføj Bus(ID, Batterikapacitet, Forbrug)
-    System-->>Driftsmedarbejder: Bus oprettet
+%% -------- Se liste --------
+note over UI,Repo: Se liste
+Driftsmedarbejder ->> UI: Åbn
+UI ->> Service: HentAlle()
+Service ->> Repo: Alle()
+Repo ->> FSRead: læs()
+FSRead -->> Repo: linjer
+Repo -->> Service: busListe
+Service -->> UI: busListe
+UI ->> Driftsmedarbejder: Vis
 
-    Driftsmedarbejder->>System: Rediger Bus(ID, ny Batterikapacitet, nyt Forbrug)
-    System-->>Driftsmedarbejder: Bus opdateret
+%% -------- Tilføj --------
+note over UI,Repo: Tilføj bus
+Driftsmedarbejder ->> UI: “Tilføj”
+UI ->> Service: Opret(busDTO)
+Service ->> Repo: Gem(bus)
+Repo ->> FSWrite: append(bus)
+FSWrite -->> Repo: OK
+Repo -->> Service: OK
+Service -->> UI: OK
+UI ->> Driftsmedarbejder: Bekræft
+UI ->> UI: Opdater liste
 
-    Driftsmedarbejder->>System: Slet Bus(ID)
-    System-->>Driftsmedarbejder: Bus slettet
+%% -------- Rediger --------
+note over UI,Repo: Rediger bus
+Driftsmedarbejder ->> UI: “Rediger”
+UI ->> Service: Opdater(busDTO)
+Service ->> Repo: Opdater(bus)
+Repo ->> FSRead: læs()
+FSRead -->> Repo: linjer
+Repo ->> FSWrite: skriv(nyeLinjer)
+FSWrite -->> Repo: OK
+Repo -->> Service: OK
+Service -->> UI: OK
+UI ->> Driftsmedarbejder: Bekræft
+UI ->> UI: Opdater liste
 
-    Driftsmedarbejder->>System: Se alle Busser
-    System-->>Driftsmedarbejder: Liste over busser
+%% -------- Slet --------
+note over UI,Repo: Slet bus
+Driftsmedarbejder ->> UI: “Slet”
+UI ->> Service: Fjern(busId)
+Service ->> Repo: Slet(busId)
+Repo ->> FSRead: læs()
+FSRead -->> Repo: linjer
+Repo ->> FSWrite: skriv(restLinjer)
+FSWrite -->> Repo: OK
+Repo -->> Service: OK
+Service -->> UI: OK
+UI ->> Driftsmedarbejder: Bekræft
+UI ->> UI: Opdater liste

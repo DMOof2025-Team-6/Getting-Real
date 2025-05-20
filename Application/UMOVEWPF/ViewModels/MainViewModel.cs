@@ -102,6 +102,9 @@ namespace UMOVEWPF.ViewModels
         public ICommand UpdateBatteryLevelCommand { get; }
         public ICommand ToggleCriticalBusesCommand { get; }
         public ICommand ShowBusRouterCommand { get; }
+        public ICommand TurboSimulerCommand { get; }
+        public bool TurboSimulerActive { get; set; }
+        public string TurboSimulerButtonText => TurboSimulerActive ? "Normal Simuler" : "Turbo Simuler";
 
         private SimulationService _simService;
 
@@ -122,6 +125,7 @@ namespace UMOVEWPF.ViewModels
             ToggleCriticalBusesCommand = new RelayCommand(_ => ToggleCriticalBuses());
             ShowWeatherCommand = new RelayCommand(_ => ShowWeatherWindow());
             ShowBusRouterCommand = new RelayCommand(_ => ShowBusRouter());
+            TurboSimulerCommand = new RelayCommand(_ => ToggleTurboSimuler());
             FilteredBuses = new ObservableCollection<Bus>();
 
             Weather.PropertyChanged += (s, e) =>
@@ -188,6 +192,15 @@ namespace UMOVEWPF.ViewModels
 
             // Opret og start SimulationService EFTER Buses er sat
             _simService = new SimulationService(Buses, Weather);
+            _simService.LowBatteryWarning += async (bus) =>
+            {
+                if (!_isReplacementDialogOpen)
+                {
+                    _isReplacementDialogOpen = true;
+                    await Application.Current.Dispatcher.InvokeAsync(() => ShowBusReplacementDialog(bus));
+                    _isReplacementDialogOpen = false;
+                }
+            };
             _simService.Start();
         }
 
@@ -332,6 +345,9 @@ namespace UMOVEWPF.ViewModels
 
         private void ShowBusReplacementDialog(Bus lowBatteryBus)
         {
+            // Nulstil tiden når advarslen vises
+            lowBatteryBus.TimeInCurrentStatus = 0;
+
             var viewModel = new BusReplacementViewModel(Buses, lowBatteryBus);
             var window = new BusReplacementWindow(viewModel);
 
@@ -339,10 +355,16 @@ namespace UMOVEWPF.ViewModels
             {
                 window.Close();
                 var simNow = replacementBus.LastUpdate;
+                
+                // Den gamle bus forbliver i Inroute i 30 minutter
+                lowBatteryBus.Status = BusStatus.Inroute;
+                lowBatteryBus.TimeInCurrentStatus = 0;  // Nulstil tiden
+                
+                // Sæt den nye bus til at overtage ruten og gå i Intercept
                 replacementBus.Status = BusStatus.Intercept;
-                replacementBus.StatusChangedAt = simNow;
+                replacementBus.TimeInCurrentStatus = 0;  // Nulstil tiden
                 replacementBus.Route = lowBatteryBus.Route;
-                // lowBatteryBus forbliver i Inroute indtil replacementBus er færdig med Intercept
+                
                 SaveBusesAsync().GetAwaiter().GetResult();
                 FilterBuses();
             };
@@ -444,6 +466,14 @@ namespace UMOVEWPF.ViewModels
             var win = new Views.WeatherWindow(vm);
             vm.OkClicked += (s, e) => win.Close();
             win.ShowDialog();
+        }
+
+        private void ToggleTurboSimuler()
+        {
+            TurboSimulerActive = !TurboSimulerActive;
+            _simService.SecondsPerTick = TurboSimulerActive ? 120.0 : 1.0;
+            OnPropertyChanged(nameof(TurboSimulerActive));
+            OnPropertyChanged(nameof(TurboSimulerButtonText));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
