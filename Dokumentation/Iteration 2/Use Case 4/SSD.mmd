@@ -1,17 +1,19 @@
 sequenceDiagram
 actor Driftsmedarbejder
-participant System
+participant UMOVEWPF_System as UMOVE System
 
-Driftsmedarbejder ->> System: HentKritiskeBusser()
-System -->> Driftsmedarbejder: Liste <Bus>
+Driftsmedarbejder ->> UMOVEWPF_System: HentKritiskeBusser()
+UMOVEWPF_System -->> Driftsmedarbejder: Liste af kritiske busser (<30%)
 
-Driftsmedarbejder ->> System: MarkerTilOpladning(busId)
-System -->> Driftsmedarbejder: Bekræft
+Driftsmedarbejder ->> UMOVEWPF_System: MarkerTilOpladning(busId)
+UMOVEWPF_System -->> Driftsmedarbejder: Bus status ændret til Oplader
 
-Driftsmedarbejder ->> System: MarkerKlar(busId)
-System -->> Driftsmedarbejder: Bekræft
+Driftsmedarbejder ->> UMOVEWPF_System: MarkerKlar(busId)
+UMOVEWPF_System -->> Driftsmedarbejder: Bus status ændret til Garage
 
-Driftsmedarbejder ->> System: ForeslåOpladning(busId)
-System -->> Driftsmedarbejder: TimeSpan
+Driftsmedarbejder ->> UMOVEWPF_System: ForeslåOpladning(busId)
+UMOVEWPF_System -->> Driftsmedarbejder: Returner estimeret opladningstid (f.eks. "1 t 45 min")
 
-Note over System: System sender<br/>Notifikation(busId)<30 % - event
+alt Automatisk notifikation
+    UMOVEWPF_System -->> Driftsmedarbejder: Vis kritisk alarm ved batteri < 30%
+end

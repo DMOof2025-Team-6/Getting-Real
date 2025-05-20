@@ -1,63 +1,20 @@
 classDiagram
-    class Bus {
-        +int BusID
-        +String BusNummer
-        +List~BatteriMåling~ BatteriHistorik
-        +double GennemsnitligKapacitetsTab()
-    }
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +BatteriNiveauProcent: double
+}
 
-    class BatteriMåling {
-        +int MålingID
-        +int BusID
-        +DateTime Tidspunkt
-        +double Kapacitet
-        +double LadeCyklus
-        +double Temperatur
-        +double SundhedsTilstand
-    }
+class BatteriLogpost {
+    +Tidspunkt: DateTime
+    +BusId: string
+    +NiveauProcent: double
+}
 
-    class BatteriAnalyseRapport {
-        +int RapportID
-        +DateTime GenereretstidsPunkt
-        +int AntalBusser
-        +double GennemsnitligKapacitetsTab
-        +List~Bus~ AnalysereteBusser
-        +ExportFormat ExportFormat
-    }
+class BatteriLog {
+    +Poster: List<BatteriLogpost>
+    +HentHistorik(busId, fra, til): IEnumerable<BatteriLogpost>
+}
 
-    class ExportFormat {
-        <<enumeration>>
-        CSV
-        XLSX
-        JSON
-        PDF
-    }
-
-    class AnalyseKriterier {
-        +DateTime StartDato
-        +DateTime SlutDato
-        +int MinimumAntalCyklusser
-        +double MinimumKapacitetsTærskel
-        +List~Bus~ FilterBusser()
-    }
-
-    class Vedligeholdelsesanbefaling {
-        +int AnbefalingID
-        +int BusID
-        +VedligeholdelsesType Type
-        +string Beskrivelse
-        +DateTime ForeslåetDato
-    }
-
-    class VedligeholdelsesType {
-        <<enumeration>>
-        BATTERISKIFT
-        KALIBRERING
-        YDERLIGERE_INSPEKTION
-        INGEN
-    }
-
-    Bus "1" -- "0..*" BatteriMåling : har
-    Bus "1" -- "0..*" Vedligeholdelsesanbefaling : får
-    BatteriAnalyseRapport "1" -- "0..*" Bus : indeholder
-    AnalyseKriterier -- BatteriAnalyseRapport : genererer
+Bus "1" --> "*" BatteriLogpost : log
+BatteriLogpost --> Bus : refererer

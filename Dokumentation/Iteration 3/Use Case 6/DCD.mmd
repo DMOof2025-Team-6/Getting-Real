@@ -1,32 +1,37 @@
-%% DCD (Design Class Diagram) for Use Case 6
 classDiagram
-    class BusDetailViewModel {
-        + Bus SelectedBus
-        + LoadBusDetailsCommand()
-    }
- 
-    class Bus {
-        +string Id
-        +double BatteryLevel
-        +BusStatus Status
-        +BusModel Model
-        +DateTime LastStatusUpdate
-    }
- 
-    class BusDetailService {
-        +Bus GetBusById(string id)
-        +bool ValidateBus(Bus bus)
-    }
+%% ---------- DOMAIN ----------
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +Route: RouteName
+    +BatteryCapacity: double
+    +BatteryLevel: double
+    +Consumption: double
+    +Status: BusStatus
+    +TimeLeftUntil13Percent(avgKmh: double): TimeSpan
+}
 
-    class BusStatus {
-        <<enumeration>>
-    }
+Bus --> BusModel
+Bus --> RouteName
+Bus --> BusStatus
 
-    class BusModel {
-        <<enumeration>>
-    }
- 
-    BusDetailViewModel --> BusDetailService
-    BusDetailViewModel --> Bus
-    Bus --> BusStatus
-    Bus --> BusModel
+%% ---------- PERSISTENCE ----------
+class FileHelper {
+    +LoadBusesAsync(): Task<List~Bus~>
+}
+
+%% ---------- VIEW-MODELS ----------
+class BusListViewModel {
+    -fileHelper: FileHelper
+    +Buses: ObservableCollection~Bus~
+    +GetSelectedBus(): Bus
+}
+
+class BusDetailViewModel {
+    +SelectedBus: Bus
+    +Validate(bus: Bus): bool         /* ID exists, Battery 0-100 */
+}
+
+BusListViewModel ..> FileHelper
+BusListViewModel --> Bus
+BusDetailViewModel --> Bus

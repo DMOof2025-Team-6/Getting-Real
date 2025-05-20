@@ -1,45 +1,46 @@
 sequenceDiagram
-actor Driftsmedarbejder
-participant UI      as "BusListView"
-participant VM      as "BusListViewModel"
-participant Sim     as "SimulationService"
-participant FileH   as "FileHelper"
-participant Bus     as "Bus obj."
+participant User as Driftsmedarbejder
+participant BusListView as BusListView.xaml
+participant ViewModel as BusListViewModel
+participant Service as SimulationService
+participant Bus as Bus
+participant FileHelper as FileHelper
 
-%% ----- Kritisk oversigt -----
-Driftsmedarbejder ->> UI: Klik “Kritiske busser”
-UI ->> VM: ShowCriticalCmd()
-VM ->> Sim: Buses
-Sim -->> VM: ObservableCollection<Bus>
-VM ->> VM: filter IsCritical
-VM -->> UI: liste
-UI ->> Driftsmedarbejder: Vis liste
+User->>BusListView: Klik "Kritiske busser"
+BusListView->>ViewModel: ShowCriticalBusesCommand()
+ViewModel->>Service: GetBuses()
+Service-->>ViewModel: returnerer ObservableCollection<Bus>
+ViewModel->>ViewModel: Filtrer(bus => bus.IsCritical)
+ViewModel-->>BusListView: Opdateret liste af kritiske busser
 
-%% ----- Marker til opladning -----
-Driftsmedarbejder ->> UI: Vælg bus + “Oplader”
-UI ->> VM: MarkChargingCmd(bus)
-VM ->> Bus: Status = Oplader
-VM ->> FileH: SaveBusesAsync(Sim.Buses)
-FileH -->> VM: OK
-VM -->> UI: Refresh
+User->>BusListView: Vælg bus, klik "Oplader"
+BusListView->>ViewModel: MarkChargingCommand(busId)
+ViewModel->>ViewModel: FindBus(busId)
+ViewModel->>Bus: SetStatus(BusStatus.Charging)
+Bus-->>ViewModel: Status sat OK
+ViewModel->>FileHelper: SaveBusesAsync(buses)
+FileHelper-->>ViewModel: Task Completed
+ViewModel-->>BusListView: Refresh UI
 
-%% ----- Marker klar igen -----
-Driftsmedarbejder ->> UI: “Klar”
-UI ->> VM: MarkReadyCmd(bus)
-VM ->> Bus: Status = Garage
-VM ->> FileH: SaveBusesAsync(...)
-FileH -->> VM: OK
-VM -->> UI: Refresh
+User->>BusListView: Vælg bus, klik "Klar"
+BusListView->>ViewModel: MarkReadyCommand(busId)
+ViewModel->>ViewModel: FindBus(busId)
+ViewModel->>Bus: SetStatus(BusStatus.Garage)
+Bus-->>ViewModel: Status sat OK
+ViewModel->>FileHelper: SaveBusesAsync(buses)
+FileHelper-->>ViewModel: Task Completed
+ViewModel-->>BusListView: Refresh UI
 
-%% ----- Foreslå opladning -----
-Driftsmedarbejder ->> UI: “Foreslå” på bus
-UI ->> VM: SuggestCharge(bus)
-VM ->> Bus: EstimateChargeTime(rateKW)
-Bus -->> VM: TimeSpan
-VM -->> UI: tid
-UI ->> Driftsmedarbejder: Vis forslag
+User->>BusListView: Klik "Foreslå" på bus
+BusListView->>ViewModel: SuggestChargeTimeCommand(busId)
+ViewModel->>ViewModel: FindBus(busId)
+ViewModel->>Bus: EstimateChargeTime(rateKW)
+Bus-->>ViewModel: Returner TimeSpan
+ViewModel-->>BusListView: Vis estimeret opladningstid
 
-%% ----- System-notifikation (<20 %) -----
-Sim ->> VM: CriticalAlert(bus)
-VM ->> UI: Pop-up / rød markering
-UI ->> Driftsmedarbejder: Alarm
+alt Automatisk batteri-alarm
+    Service->>Bus: UpdateBatteryLevel()
+    Bus->>Service: isCritical == true
+    Service->>ViewModel: CriticalBatteryAlert(bus)
+    ViewModel-->>BusListView: Pop-up med alarm, marker bus rødt
+end

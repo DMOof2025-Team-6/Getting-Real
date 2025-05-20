@@ -1,11 +1,21 @@
-%% Sequence Diagram - Automatisk og manuel persistens
 sequenceDiagram
-    participant App
-    participant File as FileHelper
- 
-    App->>File: LoadBuses() ved opstart
-    File-->>App: Returner liste
-    App->>File: SaveBuses() ved afslutning
-    File-->>App: Bekræft gemt
-    App->>File: CreateBackup() ved brugerhandling
-    File-->>App: Bekræft backup
+participant App as "App.xaml.cs"
+participant MainVM as "MainViewModel"
+participant FileH  as "FileHelper"
+
+%% ---- programstart ----
+App ->> MainVM: InitializeAsync()
+MainVM ->> FileH: LoadBusesAsync()
+FileH -->> MainVM: List<Bus>
+MainVM ->> FileH: LoadRoutesAsync()
+FileH -->> MainVM: List<Route>
+
+%% ---- lukning ----
+App ->> MainVM: OnExit()
+MainVM ->> FileH: SaveBusesAsync(Busser)
+MainVM ->> FileH: SaveRoutesAsync(Ruter)
+
+%% ---- manuel backup ----
+Driftsmedarbejder ->> MainVM: BackupCmd(path)
+MainVM ->> FileH: CopyDataFile(path)
+FileH -->> MainVM: OK / Fejl

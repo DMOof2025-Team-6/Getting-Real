@@ -1,68 +1,36 @@
 classDiagram
-    class BatteriAnalyseController {
-        -IBatteriService _batteriService
-        -IExportService _exportService
-        +HentBatterihistorik() List~BatteriMålingViewModel~
-        +GenererAnalyseRapport() BatteriAnalyseRapportViewModel
-        +EksporterData(ExportFormat format)
-    }
+%% ---------- DOMAIN ----------
+class Bus { +BusId; +Model; +BatteryLevel }
+class BatteryLogEntry { +Timestamp; +BusId; +LevelPct }
+class BatteryLog {
+    +Entries: List~BatteryLogEntry~
+    +Filter(busId, from, to): IEnumerable~BatteryLogEntry~
+}
 
-    class BatteriMålingViewModel {
-        +int BusID
-        +string BusNummer
-        +DateTime Tidspunkt
-        +double Kapacitet
-        +double LadeCyklus
-        +double SundhedsTilstand
-    }
+%% ---------- PERSISTENCE ----------
+class FileHelper {
+    +LoadBatteryLogAsync(): Task<BatteryLog>
+    +SaveBatteryLogAsync(BatteryLog): Task
+    +SaveCsv(entries, path): Task
+}
 
-    class BatteriAnalyseRapportViewModel {
-        +DateTime GenereretstidsPunkt
-        +int AntalBusser
-        +double GennemsnitligKapacitetsTab
-        +List~BatteriMålingViewModel~ Målinger
-        +List~Vedligeholdelsesanbefaling~ Anbefalinger
-    }
+%% ---------- SERVICE ----------
+class BatteryLogService {
+    -fileHelper: FileHelper
+    +GetHistory(busId, from, to): IEnumerable~BatteryLogEntry~
+    +ExportCsv(from, to, path): Task
+}
 
-    class IBatteriService {
-        <<interface>>
-        +List~BatteriMåling~ HentBatteriMålinger(AnalyseKriterier kriterier)
-        +double BeregnGennemsnitligKapacitetsTab(List~BatteriMåling~ målinger)
-        +List~Vedligeholdelsesanbefaling~ GenererVedligeholdelsesanbefalinger(List~BatteriMåling~ målinger)
-    }
+BatteryLogService ..> FileHelper
+BatteryLogService ..> BatteryLogEntry
 
-    class BatteriService {
-        -IBatteriRepository _batteriRepository
-        +HentBatteriMålinger(AnalyseKriterier kriterier) List~BatteriMåling~
-        +BeregnGennemsnitligKapacitetsTab(List~BatteriMåling~ målinger) double
-        +GenererVedligeholdelsesanbefalinger(List~BatteriMåling~ målinger) List~Vedligeholdelsesanbefaling~
-    }
+%% ---------- PRESENTATION ----------
+class BatteryHistoryViewModel {
+    -service: BatteryLogService
+    +Entries: ObservableCollection~BatteryLogEntry~
+    +LoadCmd(): Task
+    +ExportCsvCmd(): Task
+}
 
-    class IExportService {
-        <<interface>>
-        +void EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
-        +string GenererFilnavn()
-    }
-
-    class CsvExportService {
-        +EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
-        +string GenererFilnavn()
-    }
-
-    class ExcelExportService {
-        +EksporterBatteriData(List~BatteriMåling~ data, ExportFormat format)
-        +string GenererFilnavn()
-    }
-
-    class AnalyseKriterier {
-        +DateTime StartDato
-        +DateTime SlutDato
-        +double MinimumKapacitetsTærskel
-        +Valider() bool
-    }
-
-    BatteriAnalyseController ..> IBatteriService
-    BatteriAnalyseController ..> IExportService
-    BatteriService ..|> IBatteriService
-    CsvExportService ..|> IExportService
-    ExcelExportService ..|> IExportService
+BatteryHistoryViewModel ..> BatteryLogService
+BatteryHistoryViewModel --> BatteryLogEntry

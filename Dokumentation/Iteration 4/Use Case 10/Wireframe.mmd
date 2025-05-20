@@ -1,0 +1,26 @@
+﻿flowchart TD
+    %% ---------- Kontrolpanel ----------
+    subgraph Kontrolpanel
+        direction LR
+        BusSel["Bus-ID ▼"]
+        FraDato["Fra dato"]
+        TilDato["Til dato"]
+        HentBtn["Hent historik"]
+        ExportBtn["Eksporter CSV"]
+    end
+
+    %% ---------- Resultatvisning ----------
+    Chart["Linjegraf\nBatteri-% over tid"]
+    Table["Tabel\nTid  •  %"]
+
+    Kontrolpanel --> Chart
+    Kontrolpanel --> Table
+
+    %% ---------- Styling ----------
+    classDef control fill:#eef,stroke:#446;
+    classDef button  fill:#cfe,stroke:#080,font-weight:bold;
+    classDef box     fill:#fff,stroke:#444;
+
+    class BusSel,FraDato,TilDato control
+    class HentBtn,ExportBtn button
+    class Chart,Table box
