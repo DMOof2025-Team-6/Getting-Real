@@ -1,40 +1,76 @@
-%% DCD (Design Class Diagram) for Use Case 2
 classDiagram
-    class BusListViewModel {
-        + ObservableCollection<Bus> Buses
-        + LoadBatteryStatusCommand()
-        + FilterLowBatteryCommand()
-        + SearchBusByIdCommand()
-        + SortByBatteryLevelCommand()
-    }
+%% ============= DOMAIN =================
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +BatteryCapacity: double
+    +BatteryLevel: double
+    +Consumption: double
+    +Status: BusStatus
+    +TimeLeftUntil13Percent(avgSpeedKmh: double): TimeSpan
+}
  
-    class Bus {
-        +string Id
-        +BusStatus Status
-        +double BatteryLevel
-        +BusModel Model
-    }
+class BusModel {
+<<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
  
-    class SimulationService {
-        +void UpdateBatteryStatus()
-        +double EstimateRemainingTime(Bus bus)
-    }
+class BusStatus {
+<<enumeration>>
+    Inroute
+    Intercept
+    Returning
+    Charging
+    Garage
+}
  
-    class AlertService {
-        +List<Bus> GetLowBatteryBuses(double threshold)
-        +void SortByBatteryLevel(List<Bus>)
-    }
-
-    class BusStatus {
-        <<enumeration>>
-    }
-
-    class BusModel {
-        <<enumeration>>
-    }
+Bus --> BusModel
+Bus --> BusStatus
  
-    BusListViewModel --> Bus
-    BusListViewModel --> SimulationService
-    BusListViewModel --> AlertService
-    Bus --> BusStatus
-    Bus --> BusModel
+%% ============= SERVICE =================
+class SimulationService {
+    +Start(): void
+    +Stop(): void
+    +SimulateTick(): void
+    +Buses: ObservableCollection~Bus~   %% opdateres hvert tick
+}
+ 
+SimulationService --> Bus : manages battery level
+ 
+%% ============= PRESENTATION (MVVM) =============
+class BusListViewModel {
+    -simService: SimulationService
+    +Buses: ObservableCollection~Bus~
+    +Reload(): Task              %% kalder simService.Buses
+    +FilterLow(threshold): IEnumerable~Bus~   %% LINQ i ViewModel-koden
+    +Search(busId: string): Bus
+    +SortRunning(): IEnumerable~Bus~
+}
+ 
+class BusDetailViewModel {
+    +SelectedBus: Bus
+}
+ 
+class MainViewModel {
+    -fileHelper: FileHelper
+    +BusListVM: BusListViewModel
+    +BusDetailVM: BusDetailViewModel
+    +InitializeAsync(): Task      %% indlæser busser & starter SimulationService
+}
+ 
+MainViewModel --> BusListViewModel
+MainViewModel --> BusDetailViewModel
+BusListViewModel ..> SimulationService
+BusListViewModel --> Bus                : shows list
+BusDetailViewModel --> Bus              : shows details
+ 
+%% ============= FILE I/O (samme som i kode) =============
+class FileHelper {
+    +SaveBusesAsync(buses: IEnumerable~Bus~): Task
+    +LoadBusesAsync(): Task<List~Bus~>
+}
+ 
+MainViewModel ..> FileHelper

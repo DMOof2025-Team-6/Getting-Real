@@ -1,57 +1,49 @@
 sequenceDiagram
-	participant Driftsmedarbejder
-	participant System
-	participant BusManagementSystem
-
-	System-->>Driftsmedarbejder: RequestEmployeeLogin
-	Driftsmedarbejder->>System: InsertEmployeeLogin
-
-	System->>BusManagementSystem: VerifyEmployeeLogin
-	BusManagementSystem-->>System: EmployeeLoginVerified
-
-	System-->>Driftsmedarbejder: ShowOptions
-	Driftsmedarbejder->>System: ChooseOption
-
-	System->>BusManagementSystem: ChooseBusList
-	BusManagementSystem-->>System: BusList
-	System-->>Driftsmedarbejder: ShowBusList
-
-	Driftsmedarbejder->>System: ChooseBatteryStatus
-	System->>BusManagementSystem: CheckBatteryStatus
-	BusManagementSystem-->>System: BatteryStatus
-	System-->>Driftsmedarbejder: ShowBatteryStatus
-
-	Driftsmedarbejder->>System: FilterBatteryStatus
-	System->>BusManagementSystem: FilterBatteryStatus
-	BusManagementSystem-->>System: BatteryStatus
-	System-->>Driftsmedarbejder: Show BatteryStatus
-
-	Driftsmedarbejder->>System: Choose Bus
-	System-->>Driftsmedarbejder: Request BusID
-	Driftsmedarbejder->>System: Enter BusID
-	System->>BusManagementSystem: Check BusID
-	BusManagementSystem-->>System: BusID Verified
-	System-->>Driftsmedarbejder: Display("Bus Not Found")
-	System-->>Driftsmedarbejder: Show Options
-	Driftsmedarbejder->>System: Choose DetailedBusStatus
-	System->>BusManagementSystem: CheckDetailedBusStatus
-	BusManagementSystem-->>System: DetailedBusStatus
-	System-->>Driftsmedarbejder: Display("Bus offline")
-	System-->>Driftsmedarbejder: Show DetailedBusStatus
-	
-	Driftsmedarbejder->>System: Choose BatteryTimeLeft
-	System->>BusManagementSystem: Check BatteryTimeLeft
-	BusManagementSystem-->>System: BatteryTimeLeft
-	System-->>Driftsmedarbejder: Show BatteryTimeLeft
-
-	Driftsmedarbejder->>System: Choose FilterBusStatus
-	System->>BusManagementSystem: Filter BusStatus
-	BusManagementSystem-->>System: ListFilteredBusStatus
-	System-->>Driftsmedarbejder: Show ListFilteredBusStatus
-
-	Driftsmedarbejder->>System: SortByCurrentCharge
-	System->>BusManagementSystem: SortByCurrentCharge
-	BusManagementSystem-->>System: SortedListByCurrentCharge
-	System-->>Driftsmedarbejder: Show SortedListByCurrentCharge
-
-
+actor Driftsmedarbejder
+actor Chauffør
+ 
+participant ListUI    as "BusListView   (XAML)"
+participant VM        as "BusListViewModel"
+participant Sim       as "SimulationService"
+participant Bus       as "Bus (obj.)"
+ 
+%% ---------- Åbn oversigt ----------
+Driftsmedarbejder ->> ListUI: Åbn vindue
+ListUI ->> VM: Load()
+VM ->> Sim: Buses (ObservableCollection)
+Sim -->> VM: collection
+VM -->> ListUI: itemsource binding
+ 
+%% ---------- Filtrér lavt batteri ----------
+Driftsmedarbejder ->> ListUI: Sæt filter = 30 %
+ListUI ->> VM: FilterLow(30)
+VM ->> VM: LINQ Where BatteryLevel < 30
+VM -->> ListUI: filtreret liste
+ 
+%% ---------- Søg bus ----------
+Driftsmedarbejder ->> ListUI: Søg "3002"
+ListUI ->> VM: Search("3002")
+VM ->> VM: FirstOrDefault(x.BusId)
+VM -->> ListUI: Bus-instans
+ListUI ->> Driftsmedarbejder: Vis detaljer
+ 
+%% ---------- Sortér kørende ----------
+Driftsmedarbejder ->> ListUI: Sortér kørende
+ListUI ->> VM: GetRunningSorted()
+VM ->> VM: Where(Status==Inroute).OrderBy(BatteryLevel)
+VM -->> ListUI: sorteret liste
+ 
+%% ---------- Estimér resttid ----------
+Driftsmedarbejder ->> ListUI: Estimér bus 3002
+ListUI ->> VM: Estimate(bus)
+VM ->> Bus: TimeLeftUntil13Percent(20)
+Bus -->> VM: TimeSpan
+VM -->> ListUI: resttid
+ListUI ->> Driftsmedarbejder: Vis 1 t 05 m
+ 
+%% ---------- Chauffør ser eget batteri ----------
+Chauffør ->> MobileUI: Åbn batterivisning
+MobileUI ->> Sim: Buses
+Sim -->> MobileUI: collection
+MobileUI ->> MobileUI: find busId & BatteryLevel
+MobileUI -->> Chauffør: 28 %

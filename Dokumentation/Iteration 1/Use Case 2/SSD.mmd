@@ -1,0 +1,23 @@
+sequenceDiagram
+actor Driftsmedarbejder
+actor Chauffør
+participant System
+ 
+Driftsmedarbejder ->> System: HentAlleBatterier()
+System -->> Driftsmedarbejder: Liste<Bus>
+ 
+Driftsmedarbejder ->> System: FiltrérLavBatteri(tærskel%)
+System -->> Driftsmedarbejder: Del-liste
+ 
+Driftsmedarbejder ->> System: SøgBus(busId)
+System -->> Driftsmedarbejder: Bus-detaljer
+ 
+Driftsmedarbejder ->> System: HentKørendeSorteret()
+System -->> Driftsmedarbejder: Liste sorteret
+ 
+Driftsmedarbejder ->> System: EstimérResttid(busId)
+System -->> Driftsmedarbejder: TimeSpan
+ 
+Chauffør ->> System: HentEgetBatteri(busId)
+System -->> Chauffør: BatteriProcent
+
