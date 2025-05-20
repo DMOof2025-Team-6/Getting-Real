@@ -1,5 +1,5 @@
 classDiagram
-%% ========= DOMÆNE-ENTITETER =========
+%% ============ ENTITETER ============
 class Bus {
     +BusId: string
     +Model: BusModel
@@ -8,7 +8,18 @@ class Bus {
     +BatteriNiveauProcent: double
     +ForbrugKWhPrKm: double
     +Status: BusStatus
-    +BeregnResterendeDriftTid(gennemsnitsHastighedKmh: double): TimeSpan
+    +ErKritisk: bool                                   %% < 20 %
+    +BeregnResterendeDriftTid(hastighedKmh: double): TimeSpan
+    +BeregnOpladningstid(ladeeffektkW: double): TimeSpan
+}
+ 
+%% ============ ENUMS ============
+class BusModel {
+<<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
 }
  
 class RuteNavn {
@@ -23,14 +34,6 @@ class RuteNavn {
     R139
 }
  
-class BusModel {
-<<enumeration>>
-    MBeCitaro
-    YutongE12
-    BYDK9
-    Volvo7900E
-}
- 
 class BusStatus {
 <<enumeration>>
     PåRute        %% Inroute
@@ -40,7 +43,7 @@ class BusStatus {
     Garage
 }
  
-%% ========= RELATIONER =========
+%% ============ RELATIONER ============
 Bus --> BusModel
-Bus --> BusStatus
 Bus --> RuteNavn
+Bus --> BusStatus
