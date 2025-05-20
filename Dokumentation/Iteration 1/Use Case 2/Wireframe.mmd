@@ -1,0 +1,14 @@
+﻿flowchart TD
+        direction TB
+        Filter["Filtrér (%)\ninput + knap"]
+        Search["Søg bus-ID\ninput + knap"]
+        Refresh["Opdater 🔄"]
+ 
+        Table[[Tabel\nID • Model • Status • % • Kapacitet]]
+        Detail["Detalje-panel"]
+ 
+        Filter --> Table
+        Search --> Table
+        Refresh --> Table
+        Table -->|Vælg bus| Detail
+    

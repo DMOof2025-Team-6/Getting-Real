@@ -1,0 +1,49 @@
+classDiagram
+%% ============ ENTITETER ============
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +Rute: RuteNavn
+    +BatteriKapacitetKWh: double
+    +BatteriNiveauProcent: double
+    +ForbrugKWhPrKm: double
+    +Status: BusStatus
+    +ErKritisk: bool                                   %% < 20 %
+    +BeregnResterendeDriftTid(hastighedKmh: double): TimeSpan
+    +BeregnOpladningstid(ladeeffektkW: double): TimeSpan
+}
+ 
+%% ============ ENUMS ============
+class BusModel {
+<<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+ 
+class RuteNavn {
+<<enumeration>>
+    R1A
+    R10
+    R11
+    R13
+    R132
+    R133
+    R137
+    R139
+}
+ 
+class BusStatus {
+<<enumeration>>
+    PåRute        %% Inroute
+    Afløser       %% Intercept
+    Returnerer
+    Oplader
+    Garage
+}
+ 
+%% ============ RELATIONER ============
+Bus --> BusModel
+Bus --> RuteNavn
+Bus --> BusStatus

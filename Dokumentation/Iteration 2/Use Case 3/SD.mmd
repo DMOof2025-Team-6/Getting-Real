@@ -5,7 +5,7 @@ sequenceDiagram
     participant Bus
     participant BatteryInfo
 
-    Driftsmedarbejder->>System: Opdater Batteristatus (Klick)
+    Driftsmedarbejder->>UI: Opdater Batteristatus (Klick)
     UI->>BusListViewModel: UpdateBatterLevel
     BusListViewModel->>Bus: GetBatteryLevel
     Bus-->>BusListViewModel: Return Battery Level (f.eks. 46%)

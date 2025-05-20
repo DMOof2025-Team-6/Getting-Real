@@ -1,13 +1,33 @@
 classDiagram
-    class Bus {
-        ID
-        batteryCapacity
-        currentCharge
-        kmPerKwh
-        location
-        busstatus
-    }
-    class Garage {
-        Busser
-    }
-    Garage "1" --> "*" Bus
+%% ========== DOMÆNE-ENTITETER ==========
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +BatteriKapacitetKWh: double
+    +BatteriNiveauProcent: double
+    +ForbrugKWhPrKm: double
+    +Status: BusStatus
+    +BeregnResterendeDriftTid(gennemsnitsHastighedKmh: double): TimeSpan
+}
+ 
+%% ========== ENUMERATIONER ==========
+class BusModel {
+<<enumeration>>
+    MBeCitaro
+    YutongE12
+    BYDK9
+    Volvo7900E
+}
+ 
+class BusStatus {
+<<enumeration>>
+    PåRute          %% (Inroute)
+    Afløser         %% (Intercept)
+    Returnerer
+    Oplader
+    Garage
+}
+ 
+%% ========== RELATIONER ==========
+Bus --> BusModel
+Bus --> BusStatus
