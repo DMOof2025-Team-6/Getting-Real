@@ -1,16 +1,27 @@
-%% DCD (Design Class Diagram) for Use Case 11
 classDiagram
-    class FileHelper {
-        +List<Bus> LoadBuses()
-        +void SaveBuses(List<Bus>)
-        +void CreateBackup()
-    }
- 
-    class Bus {
-        +string Id
-        +double BatteryLevel
-        +BusStatus Status
-        +BusModel Model
-    }
- 
-    FileHelper --> Bus
+%% ---------- DOMAIN ----------
+class Bus { +BusId; +Model; +BatteryLevel }
+class Route { +Name; +DistanceKm }
+
+%% ---------- PERSISTENCE ----------
+class FileHelper {
+    +LoadBusesAsync(): Task<List~Bus~>
+    +SaveBusesAsync(IEnumerable~Bus~): Task
+    +LoadRoutesAsync(): Task<List~Route~>
+    +SaveRoutesAsync(IEnumerable~Route~): Task
+    +CopyDataFile(destPath): Task         /* backup */
+}
+
+%% ---------- PRESENTATION ----------
+class MainViewModel {
+    -fileHelper: FileHelper
+    +Buses: ObservableCollection~Bus~
+    +Routes: ObservableCollection~Route~
+    +InitializeAsync(): Task              /* load */
+    +ShutdownAsync(): Task                /* save */
+    +BackupCmd(path): Task                /* backup */
+}
+
+MainViewModel ..> FileHelper
+MainViewModel --> Bus
+MainViewModel --> Route

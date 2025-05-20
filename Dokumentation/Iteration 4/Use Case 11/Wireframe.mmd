@@ -1,7 +1,12 @@
-%% Wireframe Sketch (textual) - Data og backup
 flowchart TD
-    View["Dataindstillinger"]
-    View --> InfoText["Data gemmes automatisk ved afslutning"]
-    View --> LoadNotice["Data indlæses ved opstart"]
-    View --> BackupButton["[Tag manuel backup]"]
-    View --> Confirmation["[? Backup oprettet]"]
+    start["Datahåndtering"]:::node
+
+    load["Indlæs data"]:::node
+    save["Gem data"]:::node
+    backup["Backup data"]:::node
+
+    start --> load
+    start --> save
+    start --> backup
+
+    classDef node fill:#eef,stroke:#446,stroke-width:1px;

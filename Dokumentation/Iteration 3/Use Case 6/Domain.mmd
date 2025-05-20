@@ -1,14 +1,20 @@
 classDiagram
-    class Bus {
-        +string BusId
-        +string RouteId
-        +bool Kører
-        +int BatteriNiveau
-        +double KhwPerTime
-    }
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +Rute: RuteNavn
+    +BatteriKapacitetKWh: double
+    +BatteriNiveauProcent: double
+    +ForbrugKWhPrKm: double
+    +Status: BusStatus
+    +SidstOpdateret: DateTime
+    +BeregnResterendeDriftTid(hastighedKmh: double): TimeSpan
+}
 
-    class BusService {
-        +List<Bus> Buser
-    }
+class BusModel  { <<enumeration>> }
+class RuteNavn  { <<enumeration>> }
+class BusStatus { <<enumeration>> }
 
-    BusService "1" --> "*" Bus : administrerer
+Bus --> BusModel
+Bus --> RuteNavn
+Bus --> BusStatus

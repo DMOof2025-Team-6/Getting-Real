@@ -1,17 +1,20 @@
 sequenceDiagram
-    participant Bruger
-    participant BusView
-    participant BusService
-    participant Bus
+actor Driftsmedarbejder
+participant ListUI   as "BusListView"
+participant ListVM   as "BusListViewModel"
+participant DetailUI as "BusDetailView"
+participant DetailVM as "BusDetailViewModel"
 
-    Bruger->>BusView: Indtast Bus-ID
-    BusView->>BusService: GetBusById(id)
-    alt Bus fundet
-        BusService->>Bus: GetStatus()
-        Bus-->>BusService: Statusdata (batteri, forbrug, status)
-        BusService-->>BusView: Returnér detaljer
-        BusView-->>Bruger: Vis busoplysninger
-    else Bus ikke fundet
-        BusService-->>BusView: null
-        BusView-->>Bruger: Fejl: Bus-ID findes ikke
-    end
+Driftsmedarbejder ->> ListUI: Dobbeltklik bus
+ListUI ->> ListVM: getSelectedBus()
+ListVM -->> ListUI: Bus-objekt
+ListUI ->> DetailUI: Åbn vindue (Bus)
+DetailUI ->> DetailVM: ShowDetails(Bus)
+
+alt gyldigt ID & batteri 0-100 %
+    DetailVM -->> DetailUI: OK
+else ugyldigt input
+    DetailVM -->> DetailUI: Fejlmeddelelse
+end
+
+DetailUI ->> Driftsmedarbejder: Vis detaljer / fejl

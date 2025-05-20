@@ -1,20 +1,25 @@
 sequenceDiagram
-    actor DM as Driftsmedarbejder
-    actor IT as IT-afdeling
-    participant S as System
+actor Driftsmedarbejder
+participant HistUI   as "BatteryHistoryView"
+participant HistVM   as "BatteryHistoryViewModel"
+participant LogSrv   as "BatteryLogService"
+participant FileH    as "FileHelper"
 
-    %% Hent batterimålinger
-    DM->>S: hentBatterihistorik()
-    S-->>DM: viser batterimålinger
+Driftsmedarbejder ->> HistUI: Vælg bus + periode
+HistUI ->> HistVM: HentHistorik(busId, fra, til)
+HistVM ->> LogSrv: GetHistory(busId, fra, til)
+LogSrv ->> FileH: LoadBatteryLogAsync()
+FileH -->> LogSrv: BatteriLog
+LogSrv ->> LogSrv: Filter(fra, til)
+LogSrv -->> HistVM: IEnumerable<BatteriLogpost>
+HistVM -->> HistUI: Vis graf / tabel
 
-    %% Generer analyse
-    DM->>S: genererBatteriAnalyse()
-    S-->>DM: viser detaljeret analyserapport
-
-    %% Eksporter data
-    IT->>S: eksporterBatteriData(format)
-    S-->>IT: genererer eksportfil
-
-    %% Vedligeholdelsesanbefaling
-    DM->>S: hentVedligeholdelsesanbefalinger()
-    S-->>DM: viser vedligeholdelsesanbefalinger
+alt Eksport
+    IT-afdeling ->> HistUI: Klik Eksport (CSV)
+    HistUI ->> HistVM: ExportCSV(fra, til)
+    HistVM ->> LogSrv: ExportCSV(fra, til)
+    LogSrv ->> FileH: SaveCsv(tempPath)
+    FileH -->> LogSrv: OK
+    LogSrv -->> HistVM: tempPath
+    HistVM -->> IT-afdeling: Link til fil
+end

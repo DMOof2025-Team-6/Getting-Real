@@ -1,14 +1,19 @@
-%% Domain Model for Use Case 11: Datahåndtering og persistens
 classDiagram
-    class FileHelper {
-        +List<Bus> LoadBuses()
-        +void SaveBuses(List<Bus>)
-        +void CreateBackup()
-    }
- 
-    class Bus {
-        +string Id
-        +double BatteryLevel
-        +BusStatus Status
-        +BusModel Model
-    }
+class Bus {
+    +BusId: string
+    +Model: BusModel
+    +BatteriNiveauProcent: double
+}
+
+class Rute {
+    +Navn: RuteNavn
+    +DistanceKm: double
+}
+
+class DataSnapshot {
+    +Busser: List~Bus~
+    +Ruter:  List~Rute~
+}
+
+%% Kommentar: DataSnapshot er blot en samleklasse der
+%% serialiseres til og fra fil sammen med busser og ruter.
