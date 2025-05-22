@@ -7,7 +7,7 @@ class Bus {
     +BatteryLevel: double          /* 0-100 % */
     +Consumption: double           /* kWh / km */
     +Status: BusStatus
-    +IsCritical: bool              /* BatteryLevel < 20 % */
+    +IsCritical: bool              /* BatteryLevel < 30 % */
     +TimeLeftUntil13Percent(avgKmh: double): TimeSpan
 }
 
@@ -38,7 +38,7 @@ class BusListViewModel {
     -fileHelper: FileHelper
     +Buses: ObservableCollection~Bus~
 
-    /* UC-4 commands only */
+    
     +ShowCriticalCmd(): void
     +MarkChargingCmd(bus: Bus): void
     +MarkReadyCmd(bus: Bus): void
