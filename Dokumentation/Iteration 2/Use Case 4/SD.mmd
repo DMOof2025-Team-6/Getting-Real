@@ -1,46 +1,61 @@
 sequenceDiagram
-participant User as Driftsmedarbejder
-participant BusListView as BusListView.xaml
-participant ViewModel as BusListViewModel
-participant Service as SimulationService
-participant Bus as Bus
-participant FileHelper as FileHelper
+    actor Driftsmedarbejder
+    participant Timer            as "DispatcherTimer"
+    participant SimService       as "SimulationService"
+    participant Bus              as "Bus"
+    participant VM               as "BusListViewModel"
+    participant UI               as "BusListView (XAML)"
+    participant FileH            as "FileHelper"
 
-User->>BusListView: Klik "Kritiske busser"
-BusListView->>ViewModel: ShowCriticalBusesCommand()
-ViewModel->>Service: GetBuses()
-Service-->>ViewModel: returnerer ObservableCollection<Bus>
-ViewModel->>ViewModel: Filtrer(bus => bus.IsCritical)
-ViewModel-->>BusListView: Opdateret liste af kritiske busser
+    %% 0. Baggrunds­simulation og alarm
+    Timer ->> SimService: SimulateTick()
+    activate SimService
+    SimService ->> Bus: UpdateBatteryLevel(delta)
+    alt Bus.BatteryLevel < 30 && !Bus.CriticalNotified
+        SimService ->> Bus: CriticalNotified = true
+        SimService -->> SimService: CriticalAlert?.Invoke(bus)
+        SimService ->> VM: OnCriticalAlert(bus)
+    end
+    deactivate SimService
 
-User->>BusListView: Vælg bus, klik "Oplader"
-BusListView->>ViewModel: MarkChargingCommand(busId)
-ViewModel->>ViewModel: FindBus(busId)
-ViewModel->>Bus: SetStatus(BusStatus.Charging)
-Bus-->>ViewModel: Status sat OK
-ViewModel->>FileHelper: SaveBusesAsync(buses)
-FileHelper-->>ViewModel: Task Completed
-ViewModel-->>BusListView: Refresh UI
+    activate VM
+    VM ->> UI: HighlightRow(bus)
+    VM ->> UI: MessageBox.Show(...) 
+    deactivate VM
 
-User->>BusListView: Vælg bus, klik "Klar"
-BusListView->>ViewModel: MarkReadyCommand(busId)
-ViewModel->>ViewModel: FindBus(busId)
-ViewModel->>Bus: SetStatus(BusStatus.Garage)
-Bus-->>ViewModel: Status sat OK
-ViewModel->>FileHelper: SaveBusesAsync(buses)
-FileHelper-->>ViewModel: Task Completed
-ViewModel-->>BusListView: Refresh UI
+    %% 1. Vis kun kritiske busser
+    Driftsmedarbejder ->> UI: Klik "Vis kritiske busser"
+    UI ->> VM: FilterLow(30)
+    activate VM
+    VM ->> VM: Buses = SimService.Buses.Where(b => b.IsCritical)
+    VM -->> UI: Opdateret liste
+    deactivate VM
 
-User->>BusListView: Klik "Foreslå" på bus
-BusListView->>ViewModel: SuggestChargeTimeCommand(busId)
-ViewModel->>ViewModel: FindBus(busId)
-ViewModel->>Bus: EstimateChargeTime(rateKW)
-Bus-->>ViewModel: Returner TimeSpan
-ViewModel-->>BusListView: Vis estimeret opladningstid
+    %% 2. Marker bus til opladning
+    Driftsmedarbejder ->> UI: Klik "Oplader" på bus
+    UI ->> VM: MarkChargingCmd(selectedBus)
+    activate VM
+    VM ->> VM: selectedBus.Status = BusStatus.Charging
+    VM ->> FileH: SaveBusesAsync(SimService.Buses)
+    FileH -->> VM: Task.Completed
+    VM -->> UI: RefreshList()
+    deactivate VM
 
-alt Automatisk batteri-alarm
-    Service->>Bus: UpdateBatteryLevel()
-    Bus->>Service: isCritical == true
-    Service->>ViewModel: CriticalBatteryAlert(bus)
-    ViewModel-->>BusListView: Pop-up med alarm, marker bus rødt
-end
+    %% 3. Marker bus klar igen
+    Driftsmedarbejder ->> UI: Klik "Klar" på bus
+    UI ->> VM: MarkReadyCmd(selectedBus)
+    activate VM
+    VM ->> VM: selectedBus.Status = BusStatus.Garage
+    VM ->> FileH: SaveBusesAsync(SimService.Buses)
+    FileH -->> VM: Task.Completed
+    VM -->> UI: RefreshList()
+    deactivate VM
+
+    %% 4. Foreslå opladningstid
+    Driftsmedarbejder ->> UI: Klik "Foreslå opladning"
+    UI ->> VM: SuggestCharge(selectedBus, rateKW)
+    activate VM
+    VM ->> Bus: EstimateChargeTime(rateKW)
+    Bus -->> VM: TimeSpan
+    VM -->> UI: Vis TimeSpan
+    deactivate VM

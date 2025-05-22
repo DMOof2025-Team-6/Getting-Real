@@ -8,7 +8,7 @@ class Bus {
     +BatteryLevel: double
     +Consumption: double
     +Status: BusStatus
-    +IsCritical: bool                      /* BatteryLevel < 20 */
+    +IsCritical: bool                      /* BatteryLevel < 30 */
     +TimeLeftUntil13Percent(avgKmh: double): TimeSpan
     +EstimateChargeTime(rateKW: double): TimeSpan
 }
@@ -41,17 +41,13 @@ class BusListViewModel {
     -fileHelper: FileHelper
     -simService: SimulationService
     +Buses: ObservableCollection~Bus~
-    /* UC-1 CRUD */
     +AddCmd(): void
     +EditCmd(): void
-    +DeleteCmd(): void
-    /* UC-2 monitoring */
+    +DeleteCmd(): void    
     +FilterLow(threshold): IEnumerable~Bus~
     +Search(busId): Bus
-    +SortRunning(): IEnumerable~Bus~
-    /* UC-3 manual update */
-    +UpdateBatteryCmd(bus): void
-    /* UC-4 alerts */
+    +SortRunning(): IEnumerable~Bus~    
+    +UpdateBatteryCmd(bus): void    
     +ShowCriticalCmd(): void
     +MarkChargingCmd(bus): void
     +MarkReadyCmd(bus): void
