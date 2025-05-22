@@ -6,12 +6,23 @@ using UMOVEWPF.Models;
 
 namespace UMOVEWPF.Helpers
 {
+    /// <summary>
+    /// Hjælpeklasse til håndtering af filoperationer
+    /// Denne klasse håndterer læsning og skrivning af bus- og rutedata til filer
+    /// </summary>
     public static class FileHelper
     {
+        // Stier til datafiler
         private static readonly string BusesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "buses.txt");
         private static readonly string RoutesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "routes.txt");
+        // Semaphore til at sikre trådsikker adgang til busfiler
         private static readonly System.Threading.SemaphoreSlim _busesLock = new System.Threading.SemaphoreSlim(1, 1);
 
+        /// <summary>
+        /// Gemmer en liste af busser til fil
+        /// </summary>
+        /// <param name="buses">Listen af busser der skal gemmes</param>
+        /// <returns>En task der repræsenterer den asynkrone operation</returns>
         public static async Task SaveBusesAsync(IEnumerable<Bus> buses)
         {
             await _busesLock.WaitAsync();
@@ -28,6 +39,10 @@ namespace UMOVEWPF.Helpers
             finally { _busesLock.Release(); }
         }
 
+        /// <summary>
+        /// Indlæser busser fra fil
+        /// </summary>
+        /// <returns>En liste af indlæste busser</returns>
         public static async Task<List<Bus>> LoadBusesAsync()
         {
             await _busesLock.WaitAsync();
@@ -63,6 +78,11 @@ namespace UMOVEWPF.Helpers
             finally { _busesLock.Release(); }
         }
 
+        /// <summary>
+        /// Gemmer en liste af ruter til fil
+        /// </summary>
+        /// <param name="routes">Listen af ruter der skal gemmes</param>
+        /// <returns>En task der repræsenterer den asynkrone operation</returns>
         public static async Task SaveRoutesAsync(IEnumerable<Route> routes)
         {
             using (var sw = new StreamWriter(RoutesFile, false))
@@ -74,6 +94,10 @@ namespace UMOVEWPF.Helpers
             }
         }
 
+        /// <summary>
+        /// Indlæser ruter fra fil
+        /// </summary>
+        /// <returns>En liste af indlæste ruter</returns>
         public static async Task<List<Route>> LoadRoutesAsync()
         {
             var routes = new List<Route>();

@@ -13,11 +13,21 @@ using UMOVEWPF; // For SimulationService
 
 namespace UMOVEWPF.ViewModels
 {
+    /// <summary>
+    /// Hoved-ViewModel til håndtering af hele applikationen
+    /// Denne klasse implementerer INotifyPropertyChanged for at understøtte databinding i UI
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Samling af alle busser i systemet
+        /// </summary>
         public ObservableCollection<Bus> Buses { get; set; } = new ObservableCollection<Bus>();
 
         private Bus _selectedBus;
+        /// <summary>
+        /// Den valgte bus i UI
+        /// </summary>
         public Bus SelectedBus
         {
             get => _selectedBus;
@@ -25,6 +35,9 @@ namespace UMOVEWPF.ViewModels
         }
 
         private string _batteryLevelInput;
+        /// <summary>
+        /// Input til opdatering af batteriniveau
+        /// </summary>
         public string BatteryLevelInput
         {
             get => _batteryLevelInput;
@@ -32,6 +45,9 @@ namespace UMOVEWPF.ViewModels
         }
 
         private string _currentView = "Bus Administration";
+        /// <summary>
+        /// Den nuværende visning i UI
+        /// </summary>
         public string CurrentView
         {
             get => _currentView;
@@ -39,6 +55,9 @@ namespace UMOVEWPF.ViewModels
         }
 
         private bool _showOnlyCritical;
+        /// <summary>
+        /// Angiver om der kun vises busser med kritisk batteriniveau
+        /// </summary>
         public bool ShowOnlyCritical
         {
             get => _showOnlyCritical;
@@ -46,12 +65,18 @@ namespace UMOVEWPF.ViewModels
         }
 
         private bool _showOnlyCriticalToggle;
+        /// <summary>
+        /// Angiver om filter for kritiske busser er aktiveret
+        /// </summary>
         public bool ShowOnlyCriticalToggle
         {
             get => _showOnlyCriticalToggle;
             set { _showOnlyCriticalToggle = value; OnPropertyChanged(); FilterBuses(); OnPropertyChanged(nameof(CriticalButtonText)); }
         }
 
+        /// <summary>
+        /// Tekst der vises på knappen til at filtrere kritiske busser
+        /// </summary>
         public string CriticalButtonText => ShowOnlyCriticalToggle ? "Se alle busser" : "Se kun kritiske busser";
 
         /// <summary>
@@ -84,32 +109,107 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Nuværende batteriforbrug for den valgte bus
+        /// </summary>
         public double CurrentConsumption => SelectedBus != null ? Math.Round(SelectedBus.Consumption * Weather.ConsumptionMultiplier, 2) : 0.0;
+
+        /// <summary>
+        /// Tekst der viser nuværende måned og forbrugsfaktor
+        /// </summary>
         public string MonthAndFactor => $"Måned: {Weather.SelectedMonth} ({Weather.GetConsumptionMultiplier():0.##}x)";
+
+        /// <summary>
+        /// Tekst der viser status for vinduesvisker
+        /// </summary>
         public string WiperStatus => Weather.IsRaining ? "Vinduesvisker: Tændt" : "Vinduesvisker: Slukket";
 
+        /// <summary>
+        /// Vejrdata der påvirker batteriforbruget
+        /// </summary>
         public Weather Weather { get; set; } = new Weather();
+
+        /// <summary>
+        /// Kommando til at vise vejrindstillinger
+        /// </summary>
         public ICommand ShowWeatherCommand { get; }
 
+        /// <summary>
+        /// Kommando til at tilføje en ny bus
+        /// </summary>
         public ICommand AddBusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at redigere en eksisterende bus
+        /// </summary>
         public ICommand EditBusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at fjerne en bus
+        /// </summary>
         public ICommand RemoveBusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at vise busadministration
+        /// </summary>
         public ICommand ShowBusAdminCommand { get; }
+
+        /// <summary>
+        /// Kommando til at vise batteristatus
+        /// </summary>
         public ICommand ShowBatteryStatusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at vise kritiske busser
+        /// </summary>
         public ICommand ShowCriticalBusesCommand { get; }
+
+        /// <summary>
+        /// Kommando til at vise opladningsplan
+        /// </summary>
         public ICommand ShowChargingPlanCommand { get; }
+
+        /// <summary>
+        /// Kommando til at opdatere batteristatus
+        /// </summary>
         public ICommand UpdateBatteryStatusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at opdatere batteriniveau
+        /// </summary>
         public ICommand UpdateBatteryLevelCommand { get; }
+
+        /// <summary>
+        /// Kommando til at skifte mellem visning af kritiske busser
+        /// </summary>
         public ICommand ToggleCriticalBusesCommand { get; }
+
+        /// <summary>
+        /// Kommando til at vise busrouter
+        /// </summary>
         public ICommand ShowBusRouterCommand { get; }
+
+        /// <summary>
+        /// Kommando til at skifte mellem normal og turbo simulation
+        /// </summary>
         public ICommand TurboSimulerCommand { get; }
+
+        /// <summary>
+        /// Angiver om turbo simulation er aktiv
+        /// </summary>
         public bool TurboSimulerActive { get; set; }
+
+        /// <summary>
+        /// Tekst der vises på turbo simulation knappen
+        /// </summary>
         public string TurboSimulerButtonText => TurboSimulerActive ? "Normal Simuler" : "Turbo Simuler";
 
         private SimulationService _simService;
-
         private bool _isReplacementDialogOpen = false;
 
+        /// <summary>
+        /// Opretter en ny MainViewModel
+        /// </summary>
         public MainViewModel()
         {
             Weather.LoadFromFile("weather.json");
@@ -139,6 +239,9 @@ namespace UMOVEWPF.ViewModels
             };
         }
 
+        /// <summary>
+        /// Initialiserer ViewModel ved at indlæse busser og starte simulation
+        /// </summary>
         public async Task InitializeAsync()
         {
             await LoadBusesAsync();
@@ -204,6 +307,9 @@ namespace UMOVEWPF.ViewModels
             _simService.Start();
         }
 
+        /// <summary>
+        /// Håndterer ændringer i busegenskaber
+        /// </summary>
         private void Bus_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(Bus.Status) ||
@@ -217,15 +323,33 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Viser busadministration
+        /// </summary>
         private void ShowBusAdmin() => CurrentView = "Bus Administration";
+
+        /// <summary>
+        /// Viser batteristatus
+        /// </summary>
         private void ShowBatteryStatus() => CurrentView = "Batteri Status";
+
+        /// <summary>
+        /// Viser kritiske busser
+        /// </summary>
         private void ShowCriticalBuses() => CurrentView = "Kritiske Busser";
+
+        /// <summary>
+        /// Viser opladningsplan
+        /// </summary>
         private void ShowChargingPlan() => CurrentView = "Opladningsplan";
+
+        /// <summary>
+        /// Viser busrouter
+        /// </summary>
         private void ShowBusRouter() => CurrentView = "Bus Router";
 
         /// <summary>
         /// Filtrerer busserne baseret på søgetekst og kritiske busser filter
-        /// Køres automatisk når SearchText ændres eller ShowOnlyCriticalToggle ændres
         /// </summary>
         private void FilterBuses()
         {
@@ -251,6 +375,9 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Opdaterer batteristatus for alle busser
+        /// </summary>
         private async void UpdateBatteryStatus()
         {
             double averageSpeedKmh = 20;
@@ -319,6 +446,9 @@ namespace UMOVEWPF.ViewModels
             FilterBuses();
         }
 
+        /// <summary>
+        /// Opdaterer batteriniveauet for den valgte bus
+        /// </summary>
         private void UpdateBatteryLevel()
         {
             if (SelectedBus == null) return;
@@ -343,6 +473,9 @@ namespace UMOVEWPF.ViewModels
             FilterBuses();
         }
 
+        /// <summary>
+        /// Viser dialog til erstatning af en bus med lavt batteriniveau
+        /// </summary>
         private void ShowBusReplacementDialog(Bus lowBatteryBus)
         {
             // Nulstil tiden når advarslen vises
@@ -391,6 +524,9 @@ namespace UMOVEWPF.ViewModels
             window.ShowDialog();
         }
 
+        /// <summary>
+        /// Tilføjer en ny bus til systemet
+        /// </summary>
         private void AddBus()
         {
             var win = new AddEditBusWindow();
@@ -412,6 +548,9 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Redigerer en eksisterende bus
+        /// </summary>
         private void EditBus()
         {
             if (SelectedBus == null) return;
@@ -429,6 +568,9 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Fjerner en bus fra systemet
+        /// </summary>
         private void RemoveBus()
         {
             if (SelectedBus == null) return;
@@ -440,11 +582,17 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gemmer alle busser til fil
+        /// </summary>
         private async Task SaveBusesAsync()
         {
             await FileHelper.SaveBusesAsync(Buses);
         }
 
+        /// <summary>
+        /// Indlæser busser fra fil
+        /// </summary>
         private async Task LoadBusesAsync()
         {
             Buses.Clear();
@@ -455,11 +603,17 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Skifter mellem visning af kritiske busser
+        /// </summary>
         private void ToggleCriticalBuses()
         {
             ShowOnlyCriticalToggle = !ShowOnlyCriticalToggle;
         }
 
+        /// <summary>
+        /// Viser vejrindstillinger
+        /// </summary>
         private void ShowWeatherWindow()
         {
             var vm = new WeatherViewModel(Weather);
@@ -468,6 +622,9 @@ namespace UMOVEWPF.ViewModels
             win.ShowDialog();
         }
 
+        /// <summary>
+        /// Skifter mellem normal og turbo simulation
+        /// </summary>
         private void ToggleTurboSimuler()
         {
             TurboSimulerActive = !TurboSimulerActive;
@@ -476,7 +633,15 @@ namespace UMOVEWPF.ViewModels
             OnPropertyChanged(nameof(TurboSimulerButtonText));
         }
 
+        /// <summary>
+        /// Event der udløses når en egenskab ændres
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Hjælpemetode til at udløse PropertyChanged eventet
+        /// </summary>
+        /// <param name="propertyName">Navnet på den ændrede egenskab</param>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -8,6 +8,10 @@ using UMOVEWPF.Models;
 
 namespace UMOVEWPF.ViewModels
 {
+    /// <summary>
+    /// ViewModel til håndtering af buserstatning når en bus har lavt batteriniveau
+    /// Denne klasse implementerer INotifyPropertyChanged for at understøtte databinding i UI
+    /// </summary>
     public class BusReplacementViewModel : INotifyPropertyChanged
     {
         private readonly ObservableCollection<Bus> _allBuses;
@@ -16,8 +20,19 @@ namespace UMOVEWPF.ViewModels
         private bool _canPostpone = true;
         private int _postponeCount = 0;
 
+        /// <summary>
+        /// Bussen med lavt batteriniveau der skal erstattes
+        /// </summary>
         public Bus LowBatteryBus => _lowBatteryBus;
+
+        /// <summary>
+        /// Samling af tilgængelige busser der kan erstatte den nuværende bus
+        /// </summary>
         public ObservableCollection<Bus> AvailableBuses { get; }
+
+        /// <summary>
+        /// Den valgte erstatningsbus
+        /// </summary>
         public Bus SelectedReplacementBus
         {
             get => _selectedReplacementBus;
@@ -28,6 +43,9 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Angiver om udskydelse af erstatning er mulig
+        /// </summary>
         public bool CanPostpone
         {
             get => _canPostpone;
@@ -38,14 +56,41 @@ namespace UMOVEWPF.ViewModels
             }
         }
 
+        /// <summary>
+        /// Kommando til at vælge en erstatningsbus
+        /// </summary>
         public ICommand SelectBusCommand { get; }
+
+        /// <summary>
+        /// Kommando til at udskyde erstatningen
+        /// </summary>
         public ICommand PostponeCommand { get; }
+
+        /// <summary>
+        /// Kommando til at annullere erstatningen
+        /// </summary>
         public ICommand CancelCommand { get; }
 
+        /// <summary>
+        /// Event der udløses når en erstatningsbus er valgt
+        /// </summary>
         public event EventHandler<Bus> BusSelected;
+
+        /// <summary>
+        /// Event der udløses når erstatningen udskydes
+        /// </summary>
         public event EventHandler Postponed;
+
+        /// <summary>
+        /// Event der udløses når erstatningen annulleres
+        /// </summary>
         public event EventHandler Cancelled;
 
+        /// <summary>
+        /// Opretter en ny BusReplacementViewModel
+        /// </summary>
+        /// <param name="allBuses">Samling af alle busser i systemet</param>
+        /// <param name="lowBatteryBus">Bussen med lavt batteriniveau der skal erstattes</param>
         public BusReplacementViewModel(ObservableCollection<Bus> allBuses, Bus lowBatteryBus)
         {
             _allBuses = allBuses;
@@ -59,6 +104,9 @@ namespace UMOVEWPF.ViewModels
             CancelCommand = new RelayCommand(_ => OnCancelled());
         }
 
+        /// <summary>
+        /// Håndterer valg af erstatningsbus
+        /// </summary>
         private void OnBusSelected()
         {
             if (SelectedReplacementBus == null) return;
@@ -73,6 +121,9 @@ namespace UMOVEWPF.ViewModels
             BusSelected?.Invoke(this, SelectedReplacementBus);
         }
 
+        /// <summary>
+        /// Håndterer udskydelse af erstatning
+        /// </summary>
         private void OnPostponed()
         {
             _postponeCount++;
@@ -83,12 +134,23 @@ namespace UMOVEWPF.ViewModels
             Postponed?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Håndterer annullering af erstatning
+        /// </summary>
         private void OnCancelled()
         {
             Cancelled?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Event der udløses når en egenskab ændres
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Hjælpemetode til at udløse PropertyChanged eventet
+        /// </summary>
+        /// <param name="propertyName">Navnet på den ændrede egenskab</param>
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

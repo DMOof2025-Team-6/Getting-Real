@@ -7,6 +7,10 @@ using System.Linq;
 
 namespace UMOVEWPF.Helpers
 {
+    /// <summary>
+    /// Service til at simulere busdrift og batteristatus
+    /// Denne klasse håndterer den kontinuerlige simulation af bussers bevægelse, batteriforbrug og opladning
+    /// </summary>
     public class SimulationService
     {
         private readonly DispatcherTimer _timer;
@@ -16,10 +20,27 @@ namespace UMOVEWPF.Helpers
         private DateTime _lastTick;
         private HashSet<Bus> _warnedBuses = new HashSet<Bus>();
 
+        /// <summary>
+        /// Angiver om simulationen kører
+        /// </summary>
         public bool IsRunning => _timer.IsEnabled;
+
+        /// <summary>
+        /// Antal sekunder der simuleres per tick
+        /// </summary>
         public double SecondsPerTick { get; set; } = 1.0;
+
+        /// <summary>
+        /// Event der udløses når en bus har lavt batteriniveau
+        /// </summary>
         public event Action<Bus> LowBatteryWarning;
 
+        /// <summary>
+        /// Opretter en ny simulationsservice
+        /// </summary>
+        /// <param name="buses">Samlingen af busser der skal simuleres</param>
+        /// <param name="weather">Vejrdata der påvirker batteriforbruget</param>
+        /// <param name="averageSpeedKmh">Gennemsnitshastighed i km/t</param>
         public SimulationService(ObservableCollection<Bus> buses, Weather weather, double averageSpeedKmh = 20)
         {
             _buses = buses;
@@ -29,9 +50,24 @@ namespace UMOVEWPF.Helpers
             _timer.Tick += (s, e) => SimulateTick();
         }
 
+        /// <summary>
+        /// Starter simulationen
+        /// </summary>
         public void Start() { _lastTick = DateTime.Now; _timer.Start(); }
+
+        /// <summary>
+        /// Stopper simulationen
+        /// </summary>
         public void Stop() => _timer.Stop();
 
+        /// <summary>
+        /// Simulerer en tidsenhed af busdrift
+        /// Håndterer:
+        /// - Opdatering af busstatus
+        /// - Batteriforbrug baseret på kørt distance
+        /// - Opladning af busser
+        /// - Advarsler ved lavt batteriniveau
+        /// </summary>
         private void SimulateTick()
         {
             var now = DateTime.Now;

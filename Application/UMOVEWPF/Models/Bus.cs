@@ -5,11 +5,17 @@ using System.Text.Json.Serialization;
 
 namespace UMOVEWPF.Models
 {
+    /// <summary>
+    /// Enumeration af tilgængelige busruter
+    /// </summary>
     public enum RouteName
     {
         None, R1A, R10, R11, R13, R132, R133, R137, R139
     }
 
+    /// <summary>
+    /// Enumeration af tilgængelige busmodeller med deres specifikationer
+    /// </summary>
     public enum BusModel
     {
         MBeCitaro,    // 392 kWh, 1.11 kWh/km
@@ -18,9 +24,16 @@ namespace UMOVEWPF.Models
         Volvo7900E    // 470 kWh, 1.00 kWh/km
     }
 
+    /// <summary>
+    /// Repræsenterer en bus i systemet
+    /// Denne klasse implementerer INotifyPropertyChanged for at understøtte databinding i UI
+    /// </summary>
     public class Bus : INotifyPropertyChanged
     {
         private string _busId;
+        /// <summary>
+        /// Bussens unikke identifikationsnummer
+        /// </summary>
         public string BusId
         {
             get => _busId;
@@ -28,13 +41,17 @@ namespace UMOVEWPF.Models
         }
 
         private BusModel _model;
+        /// <summary>
+        /// Bussens model
+        /// Ved ændring opdateres batterikapacitet og forbrug automatisk
+        /// </summary>
         public BusModel Model
         {
             get => _model;
             set 
             { 
                 _model = value;
-                // Update battery capacity and consumption based on model
+                // Opdater batterikapacitet og forbrug baseret på model
                 switch (value)
                 {
                     case BusModel.MBeCitaro:
@@ -60,6 +77,9 @@ namespace UMOVEWPF.Models
         }
 
         private string _year;
+        /// <summary>
+        /// Bussens årgang
+        /// </summary>
         public string Year
         {
             get => _year;
@@ -67,6 +87,9 @@ namespace UMOVEWPF.Models
         }
 
         private double _batteryCapacity;
+        /// <summary>
+        /// Bussens batterikapacitet i kWh
+        /// </summary>
         public double BatteryCapacity
         {
             get => _batteryCapacity;
@@ -74,6 +97,9 @@ namespace UMOVEWPF.Models
         }
 
         private double _batteryLevel;
+        /// <summary>
+        /// Bussens nuværende batteriniveau i procent
+        /// </summary>
         public double BatteryLevel
         {
             get => _batteryLevel;
@@ -93,6 +119,9 @@ namespace UMOVEWPF.Models
         }
 
         private double _consumption;
+        /// <summary>
+        /// Bussens batteriforbrug i kWh/km
+        /// </summary>
         public double Consumption
         {
             get => _consumption;
@@ -100,6 +129,9 @@ namespace UMOVEWPF.Models
         }
 
         private DateTime _lastUpdate;
+        /// <summary>
+        /// Tidspunkt for sidste opdatering af busdata
+        /// </summary>
         public DateTime LastUpdate
         {
             get => _lastUpdate;
@@ -113,6 +145,9 @@ namespace UMOVEWPF.Models
         }
 
         private DateTime _statusChangedAt = DateTime.Now;
+        /// <summary>
+        /// Tidspunkt for sidste ændring af busstatus
+        /// </summary>
         public DateTime StatusChangedAt
         {
             get => _statusChangedAt;
@@ -120,6 +155,9 @@ namespace UMOVEWPF.Models
         }
 
         private BusStatus _status;
+        /// <summary>
+        /// Bussens nuværende status
+        /// </summary>
         public BusStatus Status
         {
             get => _status;
@@ -136,25 +174,50 @@ namespace UMOVEWPF.Models
         }
 
         private RouteName _route;
+        /// <summary>
+        /// Ruten som bussen kører på
+        /// </summary>
         public RouteName Route
         {
             get => _route;
             set { _route = value; OnPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Information om bussens batteri
+        /// </summary>
         public BatteryInfo BatteryInfo { get; set; } = new BatteryInfo();
 
+        /// <summary>
+        /// Angiver om bussen har kritisk lavt batteriniveau (under 20%)
+        /// </summary>
         public bool IsCritical => BatteryLevel < 20;
 
+        /// <summary>
+        /// Angiver om bussen er i drift (på rute, på vej til erstatning, eller på vej tilbage)
+        /// </summary>
         public bool IsInService => Status == BusStatus.Inroute || Status == BusStatus.Intercept || Status == BusStatus.Returning;
 
+        /// <summary>
+        /// Tekst der vises i UI med businformation
+        /// </summary>
         public string DisplayText => $"{BusId} | {Model} | {BatteryLevel:F1}%";
 
+        /// <summary>
+        /// Referencen til den bus som denne bus erstatter
+        /// </summary>
         public Bus ReplacingBus { get; set; }
 
+        /// <summary>
+        /// Tid i minutter som bussen har været i nuværende status
+        /// </summary>
         public double TimeInCurrentStatus { get; set; }
 
-        // Beregn tid til 13% batteri tilbage ved 20 km/t
+        /// <summary>
+        /// Beregner tid tilbage før batteriet når 13% ved en given gennemsnitshastighed
+        /// </summary>
+        /// <param name="averageSpeedKmh">Gennemsnitshastighed i km/t</param>
+        /// <returns>Tid tilbage før batteriet når 13%</returns>
         public TimeSpan TimeLeftUntil13Percent(double averageSpeedKmh = 20)
         {
             double percentToUse = BatteryLevel - 13;
@@ -164,6 +227,9 @@ namespace UMOVEWPF.Models
             return TimeSpan.FromHours(hoursLeft);
         }
 
+        /// <summary>
+        /// Formateret streng der viser tid tilbage før batteriet når 13%
+        /// </summary>
         public string TimeLeftUntil13PercentFormatted
         {
             get
@@ -175,7 +241,15 @@ namespace UMOVEWPF.Models
             }
         }
 
+        /// <summary>
+        /// Event der udløses når en egenskab ændres
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Hjælpemetode til at udløse PropertyChanged eventet
+        /// </summary>
+        /// <param name="name">Navnet på den ændrede egenskab</param>
         protected void OnPropertyChanged([CallerMemberName] string name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
