@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace UMOVEWPF.Models
 {
+    /// <summary>
+    /// Repræsenterer et vognløb i systemet
+    /// En vognløb er en tidsperiode hvor en bus er tildelt til en specifik rute
+    /// </summary>
     internal class Block
     {
         //Grundvariabler er indkapslede og beskyttede. 
@@ -21,6 +25,9 @@ namespace UMOVEWPF.Models
 
         //Modificerbare variabler påbegyndes nu - input valideres i set metoderne.
 
+        /// <summary>
+        /// Vognløbets unikke identifikationsnummer
+        /// </summary>
         public int BlockId
         {
             get { return _blockId; }
@@ -31,9 +38,11 @@ namespace UMOVEWPF.Models
 
                 _blockId = value;
             }
-
         }
 
+        /// <summary>
+        /// Starttidspunkt for vognløbet
+        /// </summary>
         public DateTime BlockStart
         {
             get { return _blockStart; }
@@ -43,6 +52,9 @@ namespace UMOVEWPF.Models
             }
         }
 
+        /// <summary>
+        /// Sluttidspunkt for vognløbet
+        /// </summary>
         public DateTime BlockEnd
         {
             get { return _blockEnd; }
@@ -52,6 +64,9 @@ namespace UMOVEWPF.Models
             }
         }
 
+        /// <summary>
+        /// Tid tilbage i drift for vognløbet
+        /// </summary>
         public double BlockTimeLeftInService //Udkommenter hele kodestykke eller slet hvis undlades
         {
             get { return _blockTimeLeftInService; }
@@ -61,6 +76,9 @@ namespace UMOVEWPF.Models
             }
         }
 
+        /// <summary>
+        /// Inaktive perioder i aktive vognløb hvor bussen ikke er i drift og derfor ikke bruger strøm
+        /// </summary>
         public double BlockPause //Inaktive perioder i aktive vognløb hvor bussen ikke er i drift og derfor ikke bruger strøm. 
         {
             get { return _blockPause; }
@@ -70,6 +88,9 @@ namespace UMOVEWPF.Models
             }
         }
 
+        /// <summary>
+        /// Buslinjen som vognløbet kører på
+        /// </summary>
         public string Route //String , ikke int, fordi rute kan indeholde bogstaver "1A", "200S", "93N" osv. 
         {
             get { return _route; } 
@@ -80,7 +101,5 @@ namespace UMOVEWPF.Models
                 _route = value;
             }
         }
-
-
     }
 }
